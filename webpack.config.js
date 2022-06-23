@@ -38,7 +38,10 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: 'babel-loader',
+        use: [
+          'babel-loader',
+          'ts-loader'
+        ],
         include: [
           path.resolve(__dirname, 'src')
         ],

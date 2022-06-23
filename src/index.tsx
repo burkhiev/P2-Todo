@@ -8,7 +8,6 @@ const rootTag = document.getElementById('root');
 if (rootTag) {
   const root = ReactDomClient.createRoot(rootTag);
   root.render(<App />);
-  console.info('wtf');
 } else {
   console.error('root section is not found');
 }

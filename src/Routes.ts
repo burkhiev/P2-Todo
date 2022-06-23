@@ -1,0 +1,1 @@
+export const homepage = '/build/index.html';
