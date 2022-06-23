@@ -1,0 +1,40 @@
+{
+  "name": "p2-todo-client-browser",
+  "version": "1.0.0",
+  "description": "learning project",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --progress --color",
+    "test": "jest",
+    "lint": "eslint ./**/*.* --color",
+    "lint:fix": "eslint ./**/*.* --color --fix"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "@babel/preset-typescript": "^7.17.12",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "babel-loader": "^8.2.5",
+    "eslint": "^8.18.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "author": "Burkhiev Victor",
+  "license": "MIT"
+}
