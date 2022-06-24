@@ -7,14 +7,14 @@ import { getTitle } from '../../../services/Lorem';
 const mockLists: Array<ITodoList> = [];
 const listsCount = 4;
 
-for (let i = 0; i < listsCount; i++) {
-    const column: ITodoList = {
-        listId: nanoid(),
-        tableId: table.tableId,
-        title: getTitle()
-    }
+for (let i = 0; i < listsCount; i += 1) {
+  const column: ITodoList = {
+    listId: nanoid(),
+    tableId: table.tableId,
+    title: getTitle(),
+  };
 
-    mockLists.push(column);
+  mockLists.push(column);
 }
 
 export default mockLists;

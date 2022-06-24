@@ -21,14 +21,45 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "error",
         "no-continue": "off",
 
-        // --------------------------------------------------------------------------------
-        // ----- Разрешение конфликта eslint и tsc.
-        //
-        // При импорте модулей eslint требует .tsx, а tsc не позволяет поставить .tsx
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "react/require-default-props": "off",
+        
+        // Позволяет сократить длину строки для удовлетворения правилу ESLint на ограничения длины.
+        "implicit-arrow-linebreak": "off",
+
+        // Позволяет "мутабельно" изменять state в createSlice через Emmet.
+        "no-param-reassign": "off",
+
+        // Авто фокус при создании задач и их списков.
+        //   В соответствии с логикой работы Trello
+        "jsx-a11y/no-autofocus": "off",
+
+        // Проект на Typescript
+        //   Проблема возникла при использовании типа JSX. ESLint не видит JSX в файлах .tsx,
+        //   https://stackoverflow.com/questions/64170868/why-eslint-consider-jsx-or-some-react-types-undefined-since-upgrade-typescript
+        "no-undef": "off",
+
+        // Позволяет использовать обычные функции для передачи в пропсы
+        "react/jsx-no-bind": [ "error",
+            {
+                "ignoreDOMComponents": false,
+                "ignoreRefs": false,
+                "allowArrowFunctions": false,
+                "allowFunctions": true, // <<< ====
+                "allowBind":  false
+            }
+        ],
+
+        // Отключение "no-unused-vars" для использование интерфейсов
+        //   Интерфейсы используются для props во всех компонентах
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+
+        // Разрешение конфликта eslint и tsc.
+        //   При импорте модулей eslint требует .tsx, а tsc не позволяет поставить .tsx
         "import/extensions": [
             "warn",
             {
@@ -37,16 +68,15 @@
         ],
         // Разрешить использовать синтаксис jsx в .tsx файлах.
         "react/jsx-filename-extension": [
-            "never",
+            "off",
             {
                 "allow": "as-needed"
             }
         ]
     },
     "ignorePatterns":[
-        "*.js",
         "**/*.css",
-        "build"
+        "**/*.json"
     ],
     "settings": {
         "import/resolver": {

@@ -1,0 +1,6 @@
+.relative-editor {
+  position: relative;
+  height: 0px;
+  overflow: visible;
+  z-index: 1001;
+}

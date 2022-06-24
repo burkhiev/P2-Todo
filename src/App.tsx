@@ -3,14 +3,15 @@ import { Provider } from 'react-redux';
 import {
   BrowserRouter as Router,
   Route,
-  Routes
+  Routes,
 } from 'react-router-dom';
 
 import PageHeader from './components/header/PageHeader';
 import PageBody from './components/body/PageBody';
-import { homepage } from './Routes';
 import ErrorBoundary from './services/ErrorBoundary';
 import store from './store/store';
+import Curtain from './components/serviceComponents/Curtain';
+import RoutePathes from './RoutePathes';
 
 export default function App() {
   return (
@@ -18,10 +19,11 @@ export default function App() {
       <ErrorBoundary>
         <Provider store={store}>
           <Router>
+            <Curtain />
             <PageHeader />
             <main>
               <Routes>
-                <Route path={homepage} element={<PageBody />} />
+                <Route path={RoutePathes.home} element={<PageBody />} />
               </Routes>
             </main>
           </Router>

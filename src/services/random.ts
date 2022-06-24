@@ -6,8 +6,7 @@ export default class Random {
   public static float(lowerBound: number, upperBound: number) {
     const errorMessage = 'lowerBound argument must be less or equal than upperBound';
 
-    if (lowerBound > upperBound)
-      throw new Error(errorMessage);
+    if (lowerBound > upperBound) throw new Error(errorMessage);
 
     const diff = upperBound - lowerBound;
 
@@ -20,13 +19,20 @@ export default class Random {
   public static int(lowerBound: number, upperBound: number) {
     const errorMessage = 'lowerBound argument must be less or equal than upperBound at least 1';
 
-    if ((upperBound - lowerBound) < 1)
-      throw new Error(errorMessage);
+    if ((upperBound - lowerBound) < 1) throw new Error(errorMessage);
 
-    const lb = Math.ceil(lowerBound);
-    const ub = Math.floor(upperBound);
     const floatResult = Random.float(lowerBound, upperBound);
-    return Math.round(floatResult);
+
+    let result = Math.round(floatResult);
+    if (result < lowerBound) {
+      result = Math.ceil(lowerBound);
+    }
+
+    if (result > upperBound) {
+      result = Math.floor(upperBound);
+    }
+
+    return result;
   }
 
   public static bool() {

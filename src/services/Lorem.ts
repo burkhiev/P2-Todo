@@ -5,9 +5,9 @@ export function getTitle() {
   const loremForNames = new LoremIpsum({
     wordsPerSentence: {
       max: 2,
-      min: 1
+      min: 1,
     },
-    seed: nanoid()
+    seed: nanoid(),
   });
 
   const result = loremForNames.generateSentences(1);
@@ -16,11 +16,11 @@ export function getTitle() {
 
 export function getSentence() {
   const loremForSentences = new LoremIpsum({
-     wordsPerSentence: {
+    wordsPerSentence: {
       max: 10,
-      min: 3
+      min: 3,
     },
-    seed: nanoid()
+    seed: nanoid(),
   });
 
   return loremForSentences.generateParagraphs(1);

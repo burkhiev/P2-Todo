@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
 
-import TodoTable from '../todo/TodoTable'
+import Table from '../todo/table/Table';
 import table from '../../store/todo/mocks/mockTodoTable';
 
 export default function PageBody() {
   return (
-    <div className='container'>
+    <div className="container">
       Body
-      <TodoTable tableId={table.tableId}/>
+      <Table tableId={table.tableId} />
     </div>
-  )
+  );
 }

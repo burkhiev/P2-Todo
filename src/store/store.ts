@@ -1,11 +1,13 @@
-import { configureStore, Store } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 
-import todoReducer from './todo/combinedReducer';
+import todoReducer from './todo/combinedReducers';
+import serviceReducer from './service/combinedReducers';
 
 const store = configureStore({
   reducer: {
-    ['todo']: todoReducer
-  }
+    todo: todoReducer,
+    service: serviceReducer,
+  },
 });
 
 export default store;

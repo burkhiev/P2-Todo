@@ -4,5 +4,6 @@ export interface ITodo {
   todoId: TodoId,
   listId: string,
   title: string,
-  description?: string
+  description?: string,
+  addedAt: string
 }

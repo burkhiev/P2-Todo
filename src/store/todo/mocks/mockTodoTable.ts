@@ -5,7 +5,7 @@ import { getTitle } from '../../../services/Lorem';
 
 const mockTodoTable: ITodoTable = {
   tableId: nanoid(),
-  name: getTitle()
+  name: getTitle(),
 };
 
 export default mockTodoTable;

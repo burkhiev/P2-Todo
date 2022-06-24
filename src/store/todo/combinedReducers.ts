@@ -5,7 +5,7 @@ import listReducer from './listSlice';
 import tableReducer from './tableSlice';
 
 export default combineReducers({
-  'todos': todoReducer,
-  'lists': listReducer,
-  'table': tableReducer
+  todos: todoReducer,
+  lists: listReducer,
+  table: tableReducer,
 });
