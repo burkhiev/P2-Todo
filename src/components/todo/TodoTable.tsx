@@ -1,10 +1,11 @@
 import React from 'react';
 
-import TodoColumn from './TodoColumn';
+import TodoList from './lists/TodoList';
 import { TodoTableId } from '../../models/ITodoTable';
 import { useAppSelector } from '../../hooks/reduxHooks';
 import { selectTableById } from '../../store/todo/tableSlice';
-import { selectTodoColumnIdsByTable } from '../../store/todo/columnSlice';
+import { selectTodoListIdsByTable } from '../../store/todo/listSlice';
+import TodoListCreator from './lists/TodoListCreator';
 
 interface ITodoTableProps {
   tableId: TodoTableId
@@ -19,20 +20,28 @@ export default function TodoTable(props: ITodoTableProps) {
   if (!table)
     throw new Error(noTableErrorMsg);
 
-  const columnIds = useAppSelector(state => selectTodoColumnIdsByTable(state, tableId));
+  const listIds = useAppSelector(state => selectTodoListIdsByTable(state, tableId));
 
-  let content: any = <span>Задач нет</span>;
+  let listContent: Array<any> = [];
 
-  if (columnIds.length > 0) {
-    content = columnIds.map(columnId =>
-      <TodoColumn key={columnId} columnId={columnId} />);
+  if (listIds.length > 0) {
+    listContent = listIds.map(listId =>
+      <TodoList key={listId} listId={listId} />);
   }
 
+  listContent.push(
+    <TodoListCreator key='listCreator' tableId={tableId} />
+  );
+
   return (
-    <div className='border bg-light my-3'>
-      <h1>{table.name}</h1>
-      <div className='d-flex flex-wrap m-2'>
-        {content}
+    <div className='v-stack bg-light pb-3'>
+      <div className='p-2'>
+        <h1 className='ms-3 fs-2'>{table.name}</h1>
+      </div>
+      <div className='container'>
+        <div className='row gy-4 row-cols-2 row-cols-md-3 row-cols-lg-5'>
+          {listContent}
+        </div>
       </div>
     </div>
   )

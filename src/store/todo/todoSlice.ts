@@ -2,7 +2,7 @@ import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 
 import { RootState } from '../store';
 import { ITodo } from '../../models/ITodo';
-import { TodoColumnId } from '../../models/ITodoColumn';
+import { TodoListId } from '../../models/ITodoList';
 import todos from './mocks/mockTodos';
 
 const todoAdapter = createEntityAdapter<ITodo>({
@@ -27,8 +27,8 @@ export const {
 } = todoAdapter.getSelectors<RootState>(state => state.todo.todos);
 
 export const selectTodoIdsByColumnId =
-  (state: RootState, columnId: TodoColumnId) => {
+  (state: RootState, columnId: TodoListId) => {
     return selectAllTodos(state)
-      .filter(todo => todo.columnId === columnId)
+      .filter(todo => todo.listId === columnId)
       .map(todo => todo.todoId)
   };

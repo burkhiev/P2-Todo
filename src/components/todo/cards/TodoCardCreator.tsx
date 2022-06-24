@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-export default function TodoInputForm() {
+export default function TodoCreator() {
   const [todoTitle, setTodoTitle] = useState('');
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

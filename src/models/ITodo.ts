@@ -2,7 +2,7 @@ export type TodoId = string;
 
 export interface ITodo {
   todoId: TodoId,
-  columnId: string,
+  listId: string,
   title: string,
   description?: string
 }

@@ -1,11 +1,11 @@
 import { combineReducers } from '@reduxjs/toolkit';
 
 import todoReducer from './todoSlice';
-import columnReducer from './columnSlice';
+import listReducer from './listSlice';
 import tableReducer from './tableSlice';
 
 export default combineReducers({
   'todos': todoReducer,
-  'columns': columnReducer,
+  'lists': listReducer,
   'table': tableReducer
 });

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { useAppSelector } from '../../hooks/reduxHooks'
-import { selectTodoById } from '../../store/todo/todoSlice';
+import { useAppSelector } from '../../../hooks/reduxHooks'
+import { selectTodoById } from '../../../store/todo/todoSlice';
 
 interface ITodoItemProps {
   todoId: string
