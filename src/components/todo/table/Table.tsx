@@ -1,4 +1,6 @@
 import React from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import './table.css';
 
@@ -38,8 +40,10 @@ export default function Table(props: ITableProps) {
       </div>
       <div className="container">
         <div className="row gy-4 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
-          {listContent}
-          <CreateListExpander tableId={tableId} />
+          <DndProvider backend={HTML5Backend}>
+            {listContent}
+            <CreateListExpander tableId={tableId} />
+          </DndProvider>
         </div>
       </div>
     </div>

@@ -48,7 +48,7 @@ export default function FieldEditor(props: ITitleEditorProps) {
       <textarea
         value={text}
         placeholder={placeholder}
-        className={`form-control form-control-sm mb-1 ${validCss}`}
+        className={`form-control form-control-sm ${validCss}`}
         rows={2}
         onChange={onChange}
         onKeyDown={onEntered}
@@ -62,7 +62,7 @@ export default function FieldEditor(props: ITitleEditorProps) {
         type="text"
         value={text}
         placeholder={placeholder}
-        className={`form-control form-control-sm mb-1 ${validCss}`}
+        className={`form-control form-control-sm ${validCss}`}
         onChange={onChange}
         onKeyDown={onEntered}
         onClick={onClick}

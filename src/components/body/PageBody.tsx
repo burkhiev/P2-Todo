@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Table from '../todo/table/Table';
-import table from '../../store/todo/mocks/mockTodoTable';
+import table from '../../service/mocks/mockTable';
 
 export default function PageBody() {
   return (

@@ -3,9 +3,10 @@ import {
 } from '@reduxjs/toolkit';
 
 import { RootState } from '../store';
-import { ITodo, TodoId } from '../../models/ITodo';
+import { ITodo } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
-import todos from './mocks/mockTodos';
+import { IAddTodoDto } from '../../models/IAddTodoDto';
+import TodoMocks from '../../service/mocks/TodoMocks';
 
 const todoAdapter = createEntityAdapter<ITodo>({
   selectId: (todo) => todo.todoId,
@@ -13,7 +14,7 @@ const todoAdapter = createEntityAdapter<ITodo>({
 });
 
 const emptyInitialState = todoAdapter.getInitialState();
-const initialState = todoAdapter.setAll(emptyInitialState, todos);
+const initialState = todoAdapter.setAll(emptyInitialState, TodoMocks.todos);
 
 const todoSlice = createSlice({
   name: 'todo',
@@ -21,14 +22,11 @@ const todoSlice = createSlice({
   reducers: {
     addTodo: {
       reducer: todoAdapter.addOne,
-      prepare(listId: TodoListId, title: string, description?: string)
-        : PayloadAction<ITodo> {
+      prepare(todoDto: IAddTodoDto): PayloadAction<ITodo> {
         return {
           payload: {
+            ...todoDto,
             todoId: nanoid(),
-            listId,
-            title,
-            description,
             addedAt: (new Date()).toISOString(),
           },
           type: 'todo/todoAdded',
@@ -37,34 +35,7 @@ const todoSlice = createSlice({
     },
     removeTodo: todoAdapter.removeOne,
     removeManyTodo: todoAdapter.removeMany,
-    updateTodo: {
-      reducer: (
-        state,
-        action: PayloadAction<{ todoId: TodoId, title: string, description: string }>,
-      ) => {
-        const { todoId, title, description } = action.payload;
-
-        const updateObj = {
-          changes: {
-            title,
-            description,
-          },
-          id: todoId,
-        };
-
-        todoAdapter.updateOne(state, updateObj);
-      },
-      prepare(todoId: TodoId, title: string, description: string) {
-        return {
-          payload: {
-            todoId,
-            title,
-            description,
-          },
-          type: 'todo/todoUpdated',
-        };
-      },
-    },
+    updateTodo: todoAdapter.updateOne,
   },
 });
 
@@ -79,10 +50,14 @@ export const {
 
 export const {
   selectAll: selectAllTodos,
+  selectIds: selectAllTodoIds,
   selectById: selectTodoById,
 } = todoAdapter.getSelectors<RootState>((state) => state.todo.todos);
 
-export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
+export const selectTodosByListId = (state: RootState, listId: TodoListId) =>
   selectAllTodos(state)
-    .filter((todo) => todo.listId === listId)
+    .filter((todo) => todo.listId === listId);
+
+export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
+  selectTodosByListId(state, listId)
     .map((todo) => todo.todoId);

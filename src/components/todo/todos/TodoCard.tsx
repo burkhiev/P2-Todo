@@ -1,57 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './todoCard.css';
-import '../../css/relative.css';
 
 import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
-import { selectTodoById } from '../../../store/todo/todoSlice';
 import EditTodoForm from './EditTodoForm';
-import { curtainOff, curtainOn } from '../../../store/service/curtainSlice';
+import { curtainOff, curtainOn } from '../../../store/style/curtainSlice';
+import { TodoId } from '../../../models/ITodo';
+import { selectTodoById } from '../../../store/todo/todoSlice';
+import useTodoDrag from '../../../hooks/useTodoDrag';
+import useTodoDropWithoutInsert from '../../../hooks/useTodoDropWithoutInsert';
 
-interface ITodoItemProps {
-  todoId: string
+export interface ITodoCardProps {
+  todoId: TodoId,
+  onIsDropOver: () => void
 }
 
-export default function TodoCard(props: ITodoItemProps) {
-  const { todoId } = props;
+export default function TodoCard(props: ITodoCardProps) {
+  const { todoId, onIsDropOver } = props;
 
   const todo = useAppSelector((state) => selectTodoById(state, todoId));
+
   if (!todo) {
-    throw new Error('todo item is empty.');
+    throw new Error('Invalid todoId prop.');
   }
 
   const dispatch = useAppDispatch();
 
-  const [isOpened, setIsOpened] = useState(false);
+  const [showEditForm, setShowEditForm] = useState<any>(null);
+
+  const [{ isDragging }, drag] = useTodoDrag(todo.todoId);
+  const [{ isOver, draggedTodo }, drop] = useTodoDropWithoutInsert(todo.listId);
+
+  useEffect(() => {
+    if (isOver && draggedTodo.todoId !== todo.todoId) {
+      onIsDropOver();
+    }
+  }, [isOver, draggedTodo, todo.todoId, onIsDropOver]);
 
   function onCloseEdit(this: HTMLElement) {
     dispatch(curtainOff());
-    setIsOpened(false);
     document.body.removeEventListener('click', onCloseEdit);
+    setShowEditForm(false);
   }
 
   function onOpenEdit(e: React.MouseEvent) {
     e.stopPropagation();
-
     dispatch(curtainOn());
-    setIsOpened(true);
     document.body.addEventListener('click', onCloseEdit);
+    setShowEditForm(true);
   }
 
-  let content: any;
+  let editForm: any;
 
-  if (isOpened) {
-    content = (
-      <div className="relative-editor">
-        <EditTodoForm todoId={todo.todoId} onClose={onCloseEdit} />
-      </div>
-    );
+  if (showEditForm) {
+    editForm = <EditTodoForm todoId={todo.todoId} onClose={onCloseEdit} />;
   }
 
   return (
-    <div className="v-stack mb-1">
-      {content}
-      <div className="d-flex">
+    <div ref={drop} className={`v-stack pb-1 ${isDragging ? 'd-none' : ''}`}>
+      {editForm}
+      <div ref={drag} className="d-flex rounded border-bottom">
         <button
           type="button"
           className="flex-grow-1 border rounded bg-white text-start"

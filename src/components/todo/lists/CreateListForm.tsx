@@ -36,21 +36,25 @@ export default function CreateListForm(props: ITodoListCreatorProps) {
 
   return (
     <>
-      <FieldEditor
-        text={title}
-        placeholder="Добавить список"
-        mustValidate
-        isValid={isTitleValid}
-        isValidated={isValidated}
-        onChange={setTitle}
-        onEntered={onAddList}
-        takeFocus
-      />
-      <CreateBtns
-        onAccept={onAddList}
-        onClose={onClose}
-        acceptBtnText="Добавить"
-      />
+      <div className="mb-2">
+        <FieldEditor
+          text={title}
+          placeholder="Добавить список"
+          mustValidate
+          isValid={isTitleValid}
+          isValidated={isValidated}
+          onChange={setTitle}
+          onEntered={onAddList}
+          takeFocus
+        />
+      </div>
+      <div>
+        <CreateBtns
+          onAccept={onAddList}
+          onClose={onClose}
+          acceptBtnText="Добавить"
+        />
+      </div>
     </>
   );
 }

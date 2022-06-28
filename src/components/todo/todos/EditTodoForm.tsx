@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import './editTodoForm.css';
+
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import useTodoEditor from '../../../hooks/useTodoEditor';
 import { TodoId } from '../../../models/ITodo';
@@ -46,7 +48,13 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
     e.stopPropagation();
 
     if (isTitleValid) {
-      dispatch(updateTodo(todoId, title, description));
+      dispatch(updateTodo({
+        id: todoId,
+        changes: {
+          title,
+          description,
+        },
+      }));
       resetStates();
       onCloseAction();
     }
@@ -63,21 +71,25 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
   }
 
   const content = (
-    <div>
-      <FieldEditor
-        text={title}
-        placeholder="Заголовок карточки"
-        mustValidate
-        isValid={isTitleValid}
-        isValidated={isValidated}
-        onChange={setTitle}
-        takeFocus
-      />
-      <FieldEditor
-        text={description}
-        placeholder="Описание карточки"
-        onChange={setDescription}
-      />
+    <div className="edit-todo-form">
+      <div className="mb-2">
+        <FieldEditor
+          text={title}
+          placeholder="Заголовок карточки"
+          mustValidate
+          isValid={isTitleValid}
+          isValidated={isValidated}
+          onChange={setTitle}
+          takeFocus
+        />
+      </div>
+      <div className="mb-2">
+        <FieldEditor
+          text={description}
+          placeholder="Описание карточки"
+          onChange={setDescription}
+        />
+      </div>
       <div className="d-flex">
         <div className="mt-1">
           <button

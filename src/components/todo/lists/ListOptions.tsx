@@ -2,10 +2,8 @@ import React from 'react';
 
 import './listsOprionsCss.css';
 
-import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoListId } from '../../../models/ITodoList';
-import { removeList } from '../../../store/todo/listSlice';
-import { removeManyTodo, selectTodoIdsByListId } from '../../../store/todo/todoSlice';
+import useListService from '../../../hooks/useListService';
 
 interface IListOptionsProps {
   listId: TodoListId
@@ -14,14 +12,7 @@ interface IListOptionsProps {
 export default function ListOptions(props: IListOptionsProps) {
   const { listId } = props;
 
-  const dispatch = useAppDispatch();
-
-  const todoIds = useAppSelector((state) => selectTodoIdsByListId(state, listId));
-
-  function onRemove() {
-    dispatch(removeManyTodo(todoIds));
-    dispatch(removeList(listId));
-  }
+  const { onRemoveList } = useListService(listId);
 
   return (
     <div className="dropend">
@@ -42,7 +33,7 @@ export default function ListOptions(props: IListOptionsProps) {
           <button
             type="button"
             className="dropdown-item"
-            onClick={onRemove}
+            onClick={onRemoveList}
           >
             Удалить
           </button>

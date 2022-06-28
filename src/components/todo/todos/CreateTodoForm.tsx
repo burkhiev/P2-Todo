@@ -29,23 +29,25 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
     setIsValidated(true);
 
     if (isTitleValid) {
-      dispatch(addTodo(listId, title));
+      dispatch(addTodo({ listId, title }));
       onClose();
     }
   }
 
   return (
     <>
-      <FieldEditor
-        text={title}
-        placeholder="Добавить карточку"
-        mustValidate
-        isValid={isTitleValid}
-        isValidated={isValidated}
-        onChange={setTitle}
-        onEntered={onAddTodo}
-        takeFocus
-      />
+      <div className="mb-2">
+        <FieldEditor
+          text={title}
+          placeholder="Добавить карточку"
+          mustValidate
+          isValid={isTitleValid}
+          isValidated={isValidated}
+          onChange={setTitle}
+          onEntered={onAddTodo}
+          takeFocus
+        />
+      </div>
       <CreateBtns
         onAccept={onAddTodo}
         onClose={onClose}

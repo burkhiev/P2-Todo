@@ -8,7 +8,7 @@ import {
 
 import PageHeader from './components/header/PageHeader';
 import PageBody from './components/body/PageBody';
-import ErrorBoundary from './services/ErrorBoundary';
+import ErrorBoundary from './service/ErrorBoundary';
 import store from './store/store';
 import Curtain from './components/serviceComponents/Curtain';
 import RoutePathes from './RoutePathes';

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
+import { useAppSelector } from '../../../hooks/reduxHooks';
+import useListService from '../../../hooks/useListService';
 import useTodoEditor from '../../../hooks/useTodoEditor';
 import { TodoListId } from '../../../models/ITodoList';
-import { selectTodoListById, updateList } from '../../../store/todo/listSlice';
+import { selectTodoListById } from '../../../store/todo/listSlice';
 import FieldEditor from '../editors/FieldEditor';
 
 interface IListTitleProps {
@@ -18,7 +19,7 @@ export default function ListTitle(props: IListTitleProps) {
     throw new Error('ListTitle component must have a valid listId prop.');
   }
 
-  const dispatch = useAppDispatch();
+  const { onEditList } = useListService(listId);
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -44,11 +45,7 @@ export default function ListTitle(props: IListTitleProps) {
 
   function onSave() {
     if (isTitleValid) {
-      dispatch(updateList({
-        id: list!.listId,
-        changes: { title },
-      }));
-
+      onEditList(title);
       setIsEdit(false);
       resetStates();
     }

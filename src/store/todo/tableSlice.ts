@@ -2,7 +2,7 @@ import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { ITodoTable } from '../../models/ITodoTable';
 
 import { RootState } from '../store';
-import mockTodoTable from './mocks/mockTodoTable';
+import TodoMocks from '../../service/mocks/TodoMocks';
 
 const todoAdapter = createEntityAdapter<ITodoTable>({
   selectId: (todo) => todo.tableId,
@@ -10,7 +10,7 @@ const todoAdapter = createEntityAdapter<ITodoTable>({
 });
 
 const emptyInitialState = todoAdapter.getInitialState();
-const initialState = todoAdapter.setAll(emptyInitialState, [mockTodoTable]);
+const initialState = todoAdapter.setAll(emptyInitialState, [TodoMocks.table]);
 
 const todoSlice = createSlice({
   name: 'table',

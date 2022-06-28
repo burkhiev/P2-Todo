@@ -1,8 +1,7 @@
 import { nanoid } from '@reduxjs/toolkit';
 
-import { ITodoList } from '../../../models/ITodoList';
-import table from './mockTodoTable';
-import { getTitle } from '../../../services/Lorem';
+import { ITodoList } from '../../models/ITodoList';
+import { getTitle } from '../Lorem';
 
 const mockLists: Array<ITodoList> = [];
 const listsCount = 4;
@@ -10,7 +9,7 @@ const listsCount = 4;
 for (let i = 0; i < listsCount; i += 1) {
   const column: ITodoList = {
     listId: nanoid(),
-    tableId: table.tableId,
+    tableId: '',
     title: getTitle(),
   };
 

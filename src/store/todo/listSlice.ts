@@ -5,14 +5,14 @@ import {
 import { RootState } from '../store';
 import { ITodoList } from '../../models/ITodoList';
 import { TodoTableId } from '../../models/ITodoTable';
-import lists from './mocks/mockTodoLists';
+import TodoMocks from '../../service/mocks/TodoMocks';
 
 const listAdapter = createEntityAdapter<ITodoList>({
   selectId: (list) => list.listId,
 });
 
 const emptyInitialState = listAdapter.getInitialState();
-const initialState = listAdapter.setAll(emptyInitialState, lists);
+const initialState = listAdapter.setAll(emptyInitialState, TodoMocks.lists);
 
 const listSlice = createSlice({
   name: 'list',

@@ -1,6 +1,6 @@
-.relative-editor {
+.edit-todo-form {
   position: relative;
-  height: 0px;
+  height: 100px;
   overflow: visible;
   z-index: 1001;
 }

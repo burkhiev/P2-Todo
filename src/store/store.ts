@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import todoReducer from './todo/combinedReducers';
-import serviceReducer from './service/combinedReducers';
+import serviceReducer from './style/combinedReducers';
 
 const store = configureStore({
   reducer: {
