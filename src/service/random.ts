@@ -17,9 +17,9 @@ export default class Random {
   }
 
   public static int(lowerBound: number, upperBound: number) {
-    const errorMessage = 'lowerBound argument must be less or equal than upperBound at least 1';
-
-    if ((upperBound - lowerBound) < 1) throw new Error(errorMessage);
+    if ((upperBound - lowerBound) < 1) {
+      return Math.floor(upperBound);
+    }
 
     const floatResult = Random.float(lowerBound, upperBound);
 

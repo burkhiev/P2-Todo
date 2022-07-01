@@ -1,5 +1,5 @@
 import React from 'react';
-import useTodoDrop from '../../../hooks/useTodoDrop';
+import useTodoDrop from '../../../hooks/dragDrop/useTodoDrop';
 import { TodoListId } from '../../../models/ITodoList';
 
 interface ITodoCardPlaceholderProps {
@@ -8,16 +8,17 @@ interface ITodoCardPlaceholderProps {
 }
 
 export default function TodoCardPlaceholder(props: ITodoCardPlaceholderProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { insertBeforeTodoIndex, listId } = props;
 
-  const [, drop] = useTodoDrop(listId, insertBeforeTodoIndex);
+  const [, drop] = useTodoDrop();
 
   return (
     <div ref={drop} className="v-stack mb-1">
       <div className="d-flex rounded border-bottom">
         <button
           type="button"
-          className="d-block flex-grow-1 pt-3 pb-3 btn rounded bg-success text-start"
+          className="d-block flex-grow-1 pt-3 pb-3 btn rounded bg-success opacity-50 text-start"
         >
           <span className="visually-hidden">placeholder</span>
         </button>

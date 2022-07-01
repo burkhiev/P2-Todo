@@ -1,0 +1,7 @@
+.appearing_pen_container>.appearing_pen {
+  visibility: hidden;
+}
+
+.appearing_pen_container:hover>.appearing_pen {
+  visibility: visible;
+}

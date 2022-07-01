@@ -1,0 +1,2 @@
+export const POSITION_STEP = 2 ** 16;
+export const MAX_POSITION_FRACTION_DIGITS_NUMBER = 3;

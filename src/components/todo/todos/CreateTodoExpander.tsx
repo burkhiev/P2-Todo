@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import useTodoDropWithoutInsert from '../../../hooks/useTodoDropWithoutInsert';
+import useTodoDrop from '../../../hooks/dragDrop/useTodoDrop';
+import { useAppSelector } from '../../../hooks/reduxHooks';
+import { TodoId } from '../../../models/ITodo';
 
 import { TodoListId } from '../../../models/ITodoList';
+import { selectTodoListById } from '../../../store/todo/listSlice';
 import OpenCreateFormBtn from '../buttons/OpenCreateFormBtn';
 import CreateTodoForm from './CreateTodoForm';
 
 interface ICreateTodoExpanderProps {
   listId: TodoListId,
-  onIsDropOver: () => void
+  setPlaceholder: (todoId?: TodoId) => void
 }
 
 export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
-  const { listId, onIsDropOver } = props;
+  const { listId, setPlaceholder } = props;
+
+  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  if (!list) {
+    throw new Error('Invalid listId prop.');
+  }
 
   const [isOpened, setIsOpened] = useState(false);
 
@@ -23,13 +31,25 @@ export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
     setIsOpened(false);
   }
 
-  const [{ isOver }, drop] = useTodoDropWithoutInsert(listId);
+  const [{ isOver }, drop] = useTodoDrop();
 
   useEffect(() => {
     if (isOver) {
-      onIsDropOver();
+      setPlaceholder();
     }
-  }, [isOver, onIsDropOver]);
+
+    //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
+    // чего обновляется функция setPlaceholder и снова вызывается useEffect.
+    // Таким образом компонент впадает в бесконечный цикл.
+    //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
+    // вызовом старой версии функции. В данном случае это не страшно,
+    // т.к. функция setPlaceholder является частью props, и при её
+    // изменении компонент создаст новый рендер.
+    //
+    // Использование useCallback c setPlaceholder ситуацию не спасает.
+    //
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOver]);
 
   return (
     <div ref={drop}>

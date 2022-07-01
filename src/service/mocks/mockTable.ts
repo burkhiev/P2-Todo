@@ -8,4 +8,4 @@ const mockTable: ITodoTable = {
   name: getTitle(),
 };
 
-export default mockTable;
+export default [mockTable];

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import './listsOprionsCss.css';
+import styles from './ListOptions.css';
 
-import { TodoListId } from '../../../models/ITodoList';
-import useListService from '../../../hooks/useListService';
+import { TodoListId } from '../../../../models/ITodoList';
+import useListService from '../../../../hooks/useListService';
 
 interface IListOptionsProps {
   listId: TodoListId
@@ -24,7 +24,7 @@ export default function ListOptions(props: IListOptionsProps) {
       >
         <span className="bi bi-three-dots" />
       </button>
-      <div className="dropdown-menu dropdown-menu-shadow">
+      <div className={`dropdown-menu ${styles.todo_list_dropdown_menu_shadow}`}>
         <div className="p-2">
           <div className="dropdown-header py-0 px-2">
             Действия со списком

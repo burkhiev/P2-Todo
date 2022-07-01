@@ -4,23 +4,34 @@ import { ITodoTable } from '../../models/ITodoTable';
 import { RootState } from '../store';
 import TodoMocks from '../../service/mocks/TodoMocks';
 
-const todoAdapter = createEntityAdapter<ITodoTable>({
+const tableAdapter = createEntityAdapter<ITodoTable>({
   selectId: (todo) => todo.tableId,
   sortComparer: (a, b) => a.tableId.localeCompare(b.tableId),
 });
 
-const emptyInitialState = todoAdapter.getInitialState();
-const initialState = todoAdapter.setAll(emptyInitialState, [TodoMocks.table]);
+const emptyInitialState = tableAdapter.getInitialState();
+const initialState = tableAdapter.setAll(emptyInitialState, TodoMocks.tables);
 
-const todoSlice = createSlice({
+const tableSlice = createSlice({
   name: 'table',
   initialState,
-  reducers: { },
+  reducers: {
+    createTable: tableAdapter.addOne,
+    updateTable: tableAdapter.updateOne,
+    deleteTable: tableAdapter.removeOne,
+  },
 });
 
-export default todoSlice.reducer;
+export default tableSlice.reducer;
+
+export const {
+  createTable,
+  updateTable,
+  deleteTable,
+} = tableSlice.actions;
 
 export const {
   selectAll: selectAllTables,
+  selectIds: selectAllTableIds,
   selectById: selectTableById,
-} = todoAdapter.getSelectors<RootState>((state) => state.todo.table);
+} = tableAdapter.getSelectors<RootState>((state) => state.todo.table);

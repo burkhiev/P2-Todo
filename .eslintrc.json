@@ -32,7 +32,7 @@
             {
                 "ignoreDOMComponents": false,
                 "ignoreRefs": false,
-                "allowArrowFunctions": false,
+                "allowArrowFunctions": true,
                 "allowFunctions": true, // <<< ====
                 "allowBind": false
             }
@@ -81,7 +81,8 @@
     },
     "ignorePatterns":[
         "**/*.css",
-        "**/*.json"
+        "**/*.json",
+        "*.js"
     ],
     "settings": {
         "import/resolver": {

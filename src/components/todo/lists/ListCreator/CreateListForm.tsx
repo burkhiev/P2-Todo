@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { useAppDispatch } from '../../../hooks/reduxHooks';
-import useTodoEditor from '../../../hooks/useTodoEditor';
-import { TodoTableId } from '../../../models/ITodoTable';
-import { addList } from '../../../store/todo/listSlice';
-import CreateBtns from '../buttons/CreateBtns';
-import FieldEditor from '../editors/FieldEditor';
+import { useAppDispatch } from '../../../../hooks/reduxHooks';
+import useTodoEditor from '../../../../hooks/useTodoEditor';
+import { TodoTableId } from '../../../../models/ITodoTable';
+import { addList } from '../../../../store/todo/listSlice';
+import CreateBtns from '../../buttons/CreateBtns';
+import FieldEditor from '../../editors/FieldEditor';
 
-interface ITodoListCreatorProps {
+interface IListCreatorFormProps {
   tableId: TodoTableId,
   onClose?: () => void
 }
 
-export default function CreateListForm(props: ITodoListCreatorProps) {
+export default function ListCreatorForm(props: IListCreatorFormProps) {
   const { tableId, onClose = () => {} } = props;
 
   const dispatch = useAppDispatch();

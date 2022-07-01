@@ -1,14 +1,14 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import './editTodoForm.css';
+import styles from './EditTodoForm.css';
 
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import useTodoEditor from '../../../hooks/useTodoEditor';
-import { TodoId } from '../../../models/ITodo';
-import { removeTodo, selectTodoById, updateTodo } from '../../../store/todo/todoSlice';
-import BtnStyles from '../buttons/BtnStyles';
-import FieldEditor from '../editors/FieldEditor';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import useTodoEditor from '../../../../hooks/useTodoEditor';
+import { TodoId } from '../../../../models/ITodo';
+import { removeTodo, selectTodoById, updateTodo } from '../../../../store/todo/todoSlice';
+import BtnStyles from '../../buttons/BootstrapBtnStyles';
+import FieldEditor from '../../editors/FieldEditor';
 
 interface ITodoCardEditorProps {
   todoId: TodoId,
@@ -71,7 +71,7 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
   }
 
   const content = (
-    <div className="edit-todo-form">
+    <div className={`${styles.edit_todo_form}`}>
       <div className="mb-2">
         <FieldEditor
           text={title}

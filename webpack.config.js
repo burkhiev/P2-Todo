@@ -1,7 +1,11 @@
 const path = require('path');
 
+const localCssIdentName = process.env.NODE_ENV !== 'production'
+  ? "[path][name]__[local]--[hash:base64:5]"
+  : "[hash:base64]"
+
 module.exports = {
-  mode: 'development',
+  mode: process.env.NODE_ENV,
 
   entry: path.join(__dirname, 'src', 'index.tsx'),
   resolve: {
@@ -56,8 +60,11 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              modules: false // необходимо для того, чтобы css классы не переименовывались
-            }
+              sourceMap: true,
+              modules: {
+                localIdentName: localCssIdentName
+              }
+            },
           }
         ],
         include: [

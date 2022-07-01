@@ -1,9 +1,9 @@
 import { ConnectDragSource, useDrag } from 'react-dnd';
 
-import DndTypes from '../components/todo/dnd/DndTypes';
-import { ITodo, TodoId } from '../models/ITodo';
-import { selectTodoById } from '../store/todo/todoSlice';
-import { useAppSelector } from './reduxHooks';
+import DndTypes from '../../DndTypes';
+import { ITodo, TodoId } from '../../models/ITodo';
+import { selectTodoById } from '../../store/todo/todoSlice';
+import { useAppSelector } from '../reduxHooks';
 
 interface ITodoDragCollectProps {
   isDragging: boolean

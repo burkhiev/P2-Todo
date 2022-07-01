@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BtnStyles from './BtnStyles';
+import BtnStyles from './BootstrapBtnStyles';
 
 interface ICreateBtnsProps {
   onAccept: () => void,

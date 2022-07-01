@@ -5,6 +5,8 @@ import App from './App';
 
 const rootTag = document.getElementById('root');
 
+console.log(process.env.NODE_ENV);
+
 if (rootTag) {
   const root = ReactDomClient.createRoot(rootTag);
   root.render(<App />);
