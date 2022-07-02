@@ -3,27 +3,39 @@ import { ConnectDropTarget, useDrop } from 'react-dnd';
 import DndTypes from '../../DndTypes';
 import { ITodo } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
-import { selectTodoIdsByListId } from '../../store/todo/todoSlice';
-import { useAppSelector } from '../reduxHooks';
+import { moveTodo } from '../../store/todo/todoSlice';
+import { useAppDispatch } from '../reduxHooks';
 
 interface ITodoDropCollectProps {
-  todoIsOver: boolean,
+  isOver: boolean,
   draggedTodo: ITodo
 }
 
-export default function useTodoDropWithoutInsert(listId: TodoListId)
+export default function useTodoDrop(
+  newListId: TodoListId,
+  insertIndex: number,
+  onDrop: () => void,
+)
   : [ITodoDropCollectProps, ConnectDropTarget] {
-  const todoIds = useAppSelector((state) => selectTodoIdsByListId(state, listId));
+  const dispatch = useAppDispatch();
 
   const [collect, drop] = useDrop<ITodo, any, ITodoDropCollectProps>(
     () => ({
       accept: DndTypes.CARD,
+      drop: ({ todoId }) => {
+        dispatch(moveTodo({
+          todoId,
+          newListId,
+          insertIndex,
+        }));
+
+        onDrop();
+      },
       collect: (monitor) => ({
-        todoIsOver: !!monitor.isOver(),
+        isOver: !!monitor.isOver(),
         draggedTodo: monitor.getItem(),
       }),
     }),
-    [todoIds.length],
   );
 
   return [collect, drop];

@@ -10,7 +10,7 @@ import ListDragDropWrap from '../lists/ListDragDropWrap';
 import { selectTodoListsByTableId } from '../../../store/todo/listSlice';
 import ListPlaceholder from '../lists/ListPlaceholder/ListPlaceholder';
 import { TodoListId } from '../../../models/ITodoList';
-import useTodoListDropInfo from '../../../hooks/dragDrop/useTodoListDropInfo';
+import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 
 // Баг ESLint
 // eslint-disable-next-line no-shadow

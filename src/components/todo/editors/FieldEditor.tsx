@@ -7,9 +7,11 @@ interface ITitleEditorProps {
   isValid?: boolean,
   isValidated?: boolean,
   useTextarea?: boolean,
+  takeFocus?: boolean,
   onChange: (value: string) => void,
   onEntered?: () => void,
-  takeFocus?: boolean,
+  onTextSelectionOn?: () => void,
+  onTextSelectionOff?: () => void
 }
 
 export default function FieldEditor(props: ITitleEditorProps) {

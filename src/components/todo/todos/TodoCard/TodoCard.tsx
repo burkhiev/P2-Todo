@@ -7,21 +7,22 @@ import EditTodoForm from '../EditTodoForm/EditTodoForm';
 import { curtainOff, curtainOn } from '../../../../store/style/curtainSlice';
 import { TodoId } from '../../../../models/ITodo';
 import { selectTodoById } from '../../../../store/todo/todoSlice';
-import useTodoDrag from '../../../../hooks/dragDrop/useTodoDrag';
-import useTodoDropWithoutInsert from '../../../../hooks/dragDrop/useTodoDropWithoutInsert';
+import useTodoDrag from '../../../../hooks/dnd/useTodoDrag';
+import useTodoDropInfo from '../../../../hooks/dnd/useTodoDropInfo';
 
 export interface ITodoCardProps {
   todoId: TodoId,
-  setPlaceholder: (todoId: TodoId) => void
+  setPlaceholder: (todoId: TodoId) => void,
+  updateList: () => void
 }
 
 export default function TodoCard(props: ITodoCardProps) {
-  const { todoId, setPlaceholder } = props;
+  const { todoId, setPlaceholder, updateList } = props;
 
   const todo = useAppSelector((state) => selectTodoById(state, todoId));
 
   if (!todo) {
-    throw new Error('Invalid todoId prop.');
+    throw new Error('Invalid argument error. Specified "todoId" do not exist.');
   }
 
   const dispatch = useAppDispatch();
@@ -29,24 +30,24 @@ export default function TodoCard(props: ITodoCardProps) {
   const [showEditForm, setShowEditForm] = useState<any>(null);
 
   const [{ isDragging }, drag] = useTodoDrag(todo.todoId);
-  const [{ todoIsOver }, drop] = useTodoDropWithoutInsert(todo.listId);
+  const [{ todoIsOver }, drop] = useTodoDropInfo();
 
   useEffect(() => {
     if (todoIsOver) {
       setPlaceholder(todoId);
     }
 
-    //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
-    // чего обновляется функция setPlaceholder и снова вызывается useEffect.
-    // Таким образом компонент впадает в бесконечный цикл.
-    //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
-    // вызовом старой версии функции. В данном случае это не страшно,
-    // т.к. функция setPlaceholder является частью props, и при её
-    // изменении компонент создаст новый рендер.
-    //
-    // Использование useCallback c setPlaceholder ситуацию не спасает.
-    //
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
+  // чего обновляется функция setPlaceholder и снова вызывается useEffect.
+  // Таким образом компонент впадает в бесконечный цикл.
+  //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
+  // вызовом старой версии функции. В данном случае это не страшно,
+  // т.к. функция setPlaceholder является частью props, и при её
+  // изменении компонент создаст новый рендер.
+  //
+  // Использование useCallback c setPlaceholder ситуацию не спасает.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todoIsOver, todoId]);
 
   function onCloseEdit(this: HTMLElement) {
@@ -65,7 +66,13 @@ export default function TodoCard(props: ITodoCardProps) {
   let editForm: any;
 
   if (showEditForm) {
-    editForm = <EditTodoForm todoId={todo.todoId} onClose={onCloseEdit} />;
+    editForm = (
+      <EditTodoForm
+        todoId={todo.todoId}
+        onClose={onCloseEdit}
+        onRemove={updateList}
+      />
+    );
   }
 
   return (

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useAppDispatch } from '../../../../hooks/reduxHooks';
-import useTodoEditor from '../../../../hooks/useTodoEditor';
+import useTodoValidators from '../../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../../models/ITodoTable';
 import { addList } from '../../../../store/todo/listSlice';
 import CreateBtns from '../../buttons/CreateBtns';
@@ -17,21 +17,23 @@ export default function ListCreatorForm(props: IListCreatorFormProps) {
 
   const dispatch = useAppDispatch();
 
-  const {
-    title,
-    setTitle,
-    isTitleValid,
-    setIsValidated,
-    isValidated,
-  } = useTodoEditor({ title: '' });
+  const [title, setTitle] = useState('');
+  const [isTitleValid, setIsTitleValid] = useState(false);
+  const [isValidated, setIsValidated] = useState(false);
+  const [validateTitle] = useTodoValidators();
+
+  function onTitleChange(value: string) {
+    setTitle(value);
+    setIsTitleValid(validateTitle(value));
+  }
 
   function onAddList() {
+    setIsValidated(true);
+
     if (isTitleValid) {
       dispatch(addList(tableId, title));
       onClose();
     }
-
-    setIsValidated(true);
   }
 
   return (
@@ -43,7 +45,7 @@ export default function ListCreatorForm(props: IListCreatorFormProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
-          onChange={setTitle}
+          onChange={onTitleChange}
           onEntered={onAddList}
           takeFocus
         />

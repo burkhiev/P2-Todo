@@ -1,29 +1,29 @@
 import { useState } from 'react';
 
-interface IUseTodoEditorArgs {
-  title?: string,
-  description?: string,
-}
-
-export default function useTodoEditor(args: IUseTodoEditorArgs) {
-  const { title: initTitle, description: initDescription } = args;
+export default function useTodoEditor(
+  initTitle?: string,
+  initDescription?: string,
+) {
+  function validateTitle(onValTitle?: string) {
+    return onValTitle && onValTitle.length > 0;
+  }
 
   const [title, setTitle] = useState(initTitle ?? '');
   const [description, setDescription] = useState(initDescription ?? '');
-  const [isTitleValid, setIsTitleValid] = useState(!!initTitle);
+  const [isTitleValid, setIsTitleValid] = useState(validateTitle(initTitle));
   const [isValidated, setIsValidated] = useState(false);
 
   function resetStates() {
     setTitle(initTitle ?? '');
     setDescription(initDescription ?? '');
-    setIsTitleValid(!!initTitle);
+    setIsTitleValid(validateTitle(initTitle));
     setIsValidated(false);
   }
 
   function setInitStates(arg: { title: string, description?: string}) {
     setTitle(arg.title ?? '');
     setDescription(arg.description ?? '');
-    setIsTitleValid(!!arg.title);
+    setIsTitleValid(validateTitle(arg.title));
     setIsValidated(false);
   }
 

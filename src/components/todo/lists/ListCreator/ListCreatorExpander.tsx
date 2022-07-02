@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { TodoTableId } from '../../../../models/ITodoTable';
 import OpenCreateFormBtn from '../../buttons/OpenCreateFormBtn';
-import TableStyles from '../List/ListBootstrapStyles';
+import TableStyles from '../List/bootstrapListStyles';
 import ListCreatorForm from './CreateListForm';
 
 interface IListCreatorExpanderProps {

@@ -1,24 +1,27 @@
 import { TodoListId } from '../models/ITodoList';
 import { removeManyTodo, selectTodoIdsByListId } from '../store/todo/todoSlice';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
-import { removeList, updateList } from '../store/todo/listSlice';
+import {
+  removeList as removeListAction,
+  updateList as updateListAction,
+} from '../store/todo/listSlice';
 
 export default function useListService(listId: TodoListId) {
   const dispatch = useAppDispatch();
 
   const todoIds = useAppSelector((state) => selectTodoIdsByListId(state, listId));
 
-  function onRemoveList() {
+  function removeList() {
     dispatch(removeManyTodo(todoIds));
-    dispatch(removeList(listId));
+    dispatch(removeListAction(listId));
   }
 
-  function onEditList(title: string) {
-    dispatch(updateList({
+  function updateList(title: string) {
+    dispatch(updateListAction({
       id: listId,
       changes: { title },
     }));
   }
 
-  return { onRemoveList, onEditList };
+  return { removeList, updateList };
 }

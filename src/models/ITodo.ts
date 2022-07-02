@@ -5,5 +5,6 @@ export interface ITodo {
   listId: string,
   title: string,
   description?: string,
-  addedAt: string
+  addedAt: string,
+  position: number
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useTodoDrop from '../../../hooks/dragDrop/useTodoDrop';
+import useTodoDropInfo from '../../../hooks/dnd/useTodoDropInfo';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoId } from '../../../models/ITodo';
 
@@ -31,25 +31,25 @@ export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
     setIsOpened(false);
   }
 
-  const [{ isOver }, drop] = useTodoDrop();
+  const [{ todoIsOver }, drop] = useTodoDropInfo();
 
   useEffect(() => {
-    if (isOver) {
+    if (todoIsOver) {
       setPlaceholder();
     }
 
-    //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
-    // чего обновляется функция setPlaceholder и снова вызывается useEffect.
-    // Таким образом компонент впадает в бесконечный цикл.
-    //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
-    // вызовом старой версии функции. В данном случае это не страшно,
-    // т.к. функция setPlaceholder является частью props, и при её
-    // изменении компонент создаст новый рендер.
-    //
-    // Использование useCallback c setPlaceholder ситуацию не спасает.
-    //
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOver]);
+  //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
+  // чего обновляется функция setPlaceholder и снова вызывается useEffect.
+  // Таким образом компонент впадает в бесконечный цикл.
+  //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
+  // вызовом старой версии функции. В данном случае это не страшно,
+  // т.к. функция setPlaceholder является частью props, и при её
+  // изменении компонент создаст новый рендер.
+  //
+  // Использование useCallback c setPlaceholder ситуацию не спасает.
+  //
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todoIsOver]);
 
   return (
     <div ref={drop}>

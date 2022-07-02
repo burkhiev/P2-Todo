@@ -4,17 +4,17 @@ import DndTypes from '../../DndTypes';
 import { ITodo } from '../../models/ITodo';
 
 interface ITodoDropCollectProps {
-  isOver: boolean,
+  todoIsOver: boolean,
   draggedTodo: ITodo
 }
 
-export default function useTodoDrop()
+export default function useTodoDropInfo()
   : [ITodoDropCollectProps, ConnectDropTarget] {
   const [collect, drop] = useDrop<ITodo, any, ITodoDropCollectProps>(
     () => ({
       accept: DndTypes.CARD,
       collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
+        todoIsOver: !!monitor.isOver(),
         draggedTodo: monitor.getItem(),
       }),
     }),

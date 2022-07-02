@@ -1,7 +1,7 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
+import { useAppDispatch } from '../../../hooks/reduxHooks';
 
-import useTodoEditor from '../../../hooks/useTodoEditor';
+import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../models/ITodoList';
 import { addTodo } from '../../../store/todo/todoSlice';
 import CreateBtns from '../buttons/CreateBtns';
@@ -15,15 +15,17 @@ interface ICreateTodoFormProps {
 export default function CreateTodoForm(props: ICreateTodoFormProps) {
   const { listId, onClose = () => {} } = props;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const {
-    title,
-    setTitle,
-    isTitleValid,
-    setIsValidated,
-    isValidated,
-  } = useTodoEditor({ title: '' });
+  const [title, setTitle] = useState('');
+  const [isTitleValid, setIsTitleValid] = useState(false);
+  const [isValidated, setIsValidated] = useState(false);
+  const [validateTitle] = useTodoValidators();
+
+  function onTitleChange(value: string) {
+    setTitle(value);
+    setIsTitleValid(validateTitle(value));
+  }
 
   function onAddTodo() {
     setIsValidated(true);
@@ -43,7 +45,7 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
-          onChange={setTitle}
+          onChange={onTitleChange}
           onEntered={onAddTodo}
           takeFocus
         />

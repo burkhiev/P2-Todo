@@ -2,8 +2,8 @@
 
 import React, { useEffect } from 'react';
 
-import useTodoListDrag from '../../../hooks/dragDrop/useTodoListDrag';
-import useTodoListDropInfo from '../../../hooks/dragDrop/useTodoListDropInfo';
+import useTodoListDrag from '../../../hooks/dnd/useTodoListDrag';
+import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoListId } from '../../../models/ITodoList';
 import { selectTodoListById } from '../../../store/todo/listSlice';

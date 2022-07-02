@@ -2,8 +2,8 @@ import React from 'react';
 
 import styles from './ListPlaceholder.css';
 
-import ListBootstrapStyles from '../List/ListBootstrapStyles';
-import useTodoListDrop from '../../../../hooks/dragDrop/useTodoListDrop';
+import ListBootstrapStyles from '../List/bootstrapListStyles';
+import useTodoListDrop from '../../../../hooks/dnd/useTodoListDrop';
 import { IOnDropArg, IOnDropReturnType } from '../../table/Table';
 
 interface IListPlaceholderProps extends IOnDropArg {

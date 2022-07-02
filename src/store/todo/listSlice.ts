@@ -139,16 +139,6 @@ const listSlice = createSlice({
             : 0
         );
 
-      // console.group();
-      // console.log('targetList:', targetList?.title);
-      // console.log('nearbyList:', nearbyList?.title);
-      // console.log('relativeSide', TodoListDropSide[dropSide]);
-      // console.groupEnd();
-      // console.group();
-      // console.log('targetPos:', targetPos);
-      // console.log('nearbyPos:', nearbyPos);
-      // console.groupEnd();
-
       if (targetPos && targetPos <= 0) {
         throw new Error('Todo list position cannot be less than zero.');
       }
@@ -164,7 +154,7 @@ const listSlice = createSlice({
       // Если количество знаков в дробной части позиции
       // превышает определенный порог, обновляем все позиции
       // элементов идущих после обрабатываемых.
-      // Обновление производиться с шагом POSITION_STEP.
+      // Обновление производится с шагом POSITION_STEP.
       //
       // Похожая логика работает в Trello.
       const numCount = MathService.countOfFractionalPartNumbers(newListPos);
@@ -202,15 +192,6 @@ const listSlice = createSlice({
           }
         }
       }
-
-      // const resultLists = Object.values(state.entities)
-      //   .filter(curList => curList?.tableId === draggedList.tableId)
-      //   .sort((a, b) => (a?.position ?? 0) - (b?.position ?? 0));
-
-      // resultLists.forEach(list => {
-      //   console.log('title:', list?.title, '| position:', list?.position);
-      //   console.log();
-      // });
     },
   },
 });

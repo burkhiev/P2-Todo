@@ -12,7 +12,7 @@ interface IListOptionsProps {
 export default function ListOptions(props: IListOptionsProps) {
   const { listId } = props;
 
-  const { onRemoveList } = useListService(listId);
+  const { removeList } = useListService(listId);
 
   return (
     <div className="dropend">
@@ -26,14 +26,10 @@ export default function ListOptions(props: IListOptionsProps) {
       </button>
       <div className={`dropdown-menu ${styles.todo_list_dropdown_menu_shadow}`}>
         <div className="p-2">
-          <div className="dropdown-header py-0 px-2">
-            Действия со списком
-          </div>
-          <hr />
           <button
             type="button"
             className="dropdown-item"
-            onClick={onRemoveList}
+            onClick={removeList}
           >
             Удалить
           </button>

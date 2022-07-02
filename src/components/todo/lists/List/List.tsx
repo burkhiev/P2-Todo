@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-
 import { nanoid } from '@reduxjs/toolkit';
 
 import { TodoListId } from '../../../../models/ITodoList';
 import { useAppSelector } from '../../../../hooks/reduxHooks';
 import TodoCard from '../../todos/TodoCard/TodoCard';
-import TableStyles from './ListBootstrapStyles';
+import TableStyles from './bootstrapListStyles';
 import CreateTodoExpander from '../../todos/CreateTodoExpander';
 import ListOptions from '../ListOptions/ListOptions';
-import ListTitle from '../ListTitle';
+import ListTitle from '../ListTitle/ListTitle';
 import TodoCardPlaceholder from '../../todos/TodoCardPlaceholder';
 import { TodoId } from '../../../../models/ITodo';
-import useTodoDropWithoutInsert from '../../../../hooks/dragDrop/useTodoDropWithoutInsert';
+import useTodoDropInfo from '../../../../hooks/dnd/useTodoDropInfo';
 import { selectTodoListById } from '../../../../store/todo/listSlice';
 import { selectTodoIdsByListId } from '../../../../store/todo/todoSlice';
 
@@ -27,19 +26,30 @@ export default function List(props: IListProps) {
     throw new Error('List component must have a valid list id.');
   }
 
-  const sortedTodoIds = useAppSelector((state) => selectTodoIdsByListId(state, listId));
+  const defaultTodoIds = useAppSelector((state) => selectTodoIdsByListId(state, listId));
 
-  const [todos, setTodos] = useState<(TodoId | undefined)[]>([...sortedTodoIds]);
+  const [todoIds, setTodos] = useState<(TodoId | undefined)[]>([...defaultTodoIds]);
+  const [needUpdateTodos, setNeedUpdateTodos] = useState(false);
 
-  const [{ todoIsOver, draggedTodo }, todoDrop] = useTodoDropWithoutInsert(listId);
+  /**
+   * Функция предназначена для передачи возможности
+   * обновления списка дочерним компонентам.
+   */
+  function setNewTodos() {
+    setNeedUpdateTodos(true);
+  }
 
-  // ***** !!! *****
-  // Placeholder стоит на месте null в списке задач
+  if (needUpdateTodos) {
+    setTodos([...defaultTodoIds]);
+    setNeedUpdateTodos(false);
+  }
 
-  // Удаление placeholder
+  const [{ todoIsOver, draggedTodo }, todoDrop] = useTodoDropInfo();
+
+  // Удаление placeholder при выходе из области списка.
   useEffect(() => {
     if (!todoIsOver) {
-      const todoListCopy = todos.slice();
+      const todoListCopy = todoIds.slice();
       const index = todoListCopy.indexOf(undefined);
 
       if (index >= 0) {
@@ -47,21 +57,16 @@ export default function List(props: IListProps) {
         setTodos(todoListCopy);
       }
     }
-  }, [todoIsOver, todos]);
+  }, [todoIsOver, todoIds]);
 
-  // Обновляем компонент если:
-  // 1. В список добавлялись элементы.
-  // 2. Из списка удалялись элементы.
+  // Обновляем компонент при изменении количества в списке
   useEffect(() => {
-    setTodos([...sortedTodoIds]);
-
-  // Предотвращаем бесконечный рендеринг следя
-  // за кол-вом элементов, а не за ссылкой на объект.
+    setNewTodos();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortedTodoIds.length]);
+  }, [defaultTodoIds.length]);
 
   /**
-   * Отвечает за сдвиг карточек(Drag&Drop)
+   * Отвечает за сдвиг placeholder'а (Drag&Drop)
    * @param todoId id сдвигаемой карточки
    * @returns void
    */
@@ -70,14 +75,14 @@ export default function List(props: IListProps) {
       return;
     }
 
-    const todoListCopy = todos.slice();
+    const todoListCopy = todoIds.slice();
 
     const todoIndex = todoListCopy.indexOf(todoId);
     const nullIndex = todoListCopy.indexOf(undefined);
 
-    // сдвигаемой карточки или заполнителя нет
+    // placeholder'а нет
     if (nullIndex < 0) {
-      todoListCopy.splice(todoIndex < 0 ? todoListCopy.length : todoIndex, 0, undefined);
+      todoListCopy.splice((todoIndex < 0) ? todoListCopy.length : todoIndex, 0, undefined);
       setTodos(todoListCopy);
       return;
     }
@@ -87,7 +92,9 @@ export default function List(props: IListProps) {
 
       // заполнитель был над сдвигаемым элементом
       if (nullIndex < todoIndex) {
-        todoListCopy.splice(nullIndex + 1, 0, undefined);
+        // todoIndex -= 1;
+        // todoListCopy.splice(todoIndex + 1, 0, undefined);
+        todoListCopy.splice(todoIndex, 0, undefined);
       }
 
       // заполнитель был под сдвигаемым элементом
@@ -95,19 +102,18 @@ export default function List(props: IListProps) {
         todoListCopy.splice(todoIndex, 0, undefined);
       }
 
-      if (nullIndex !== todoIndex) {
-        setTodos(todoListCopy);
-      }
+      setTodos(todoListCopy);
     }
   }
 
-  const renderedTodos = todos.map((todoId, index) => {
+  const renderedTodos = todoIds.map((todoId, index) => {
     if (todoId === undefined) {
       return (
         <TodoCardPlaceholder
           key={nanoid()}
           listId={listId}
-          insertBeforeTodoIndex={index}
+          insertIndex={index}
+          onDrop={setNewTodos}
         />
       );
     }
@@ -117,28 +123,26 @@ export default function List(props: IListProps) {
         key={todoId}
         todoId={todoId}
         setPlaceholder={setTodoPlaceholder}
+        updateList={setNewTodos}
       />
     );
   });
 
   return (
-    // div обертка нужна для использования внутренних row отступов Bootstrap
-    <div>
-      <div ref={todoDrop} className={`${TableStyles.list}`}>
-        <div className="row row-cols-2 g-0 m-0 mb-2 ">
-          <div className="col-9 p-2">
-            <ListTitle listId={listId} />
-          </div>
-          <div className="col-3 d-flex justify-content-end">
-            <ListOptions listId={listId} />
-          </div>
+    <div ref={todoDrop} className={`${TableStyles.list}`}>
+      <div className="row row-cols-2 g-0 m-0 mb-2 ">
+        <div className="col-9 p-2">
+          <ListTitle listId={listId} />
         </div>
-        <div className="v-stack mb-3">
-          {renderedTodos}
+        <div className="col-3 d-flex justify-content-end">
+          <ListOptions listId={listId} />
         </div>
-        <div>
-          <CreateTodoExpander listId={listId} setPlaceholder={setTodoPlaceholder} />
-        </div>
+      </div>
+      <div className="v-stack mb-3">
+        {renderedTodos}
+      </div>
+      <div>
+        <CreateTodoExpander listId={listId} setPlaceholder={setTodoPlaceholder} />
       </div>
     </div>
   );

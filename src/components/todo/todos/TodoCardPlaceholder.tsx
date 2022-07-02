@@ -1,17 +1,19 @@
 import React from 'react';
-import useTodoDrop from '../../../hooks/dragDrop/useTodoDrop';
+
+import useTodoDrop from '../../../hooks/dnd/useTodoDrop';
 import { TodoListId } from '../../../models/ITodoList';
 
 interface ITodoCardPlaceholderProps {
   listId: TodoListId,
-  insertBeforeTodoIndex: number
+  insertIndex: number,
+  onDrop: () => void
 }
 
 export default function TodoCardPlaceholder(props: ITodoCardPlaceholderProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { insertBeforeTodoIndex, listId } = props;
+  const { insertIndex, listId, onDrop } = props;
 
-  const [, drop] = useTodoDrop();
+  const [, drop] = useTodoDrop(listId, insertIndex, onDrop);
 
   return (
     <div ref={drop} className="v-stack mb-1">
