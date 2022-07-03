@@ -1,0 +1,11 @@
+.table_placeholder_container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.table_placeholder_icon {
+  transform: scale(4);
+}

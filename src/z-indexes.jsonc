@@ -1,0 +1,5 @@
+// Список использованных z-index
+{
+  "curtain.css": 1000,
+  "todoCard.css": 1001
+}

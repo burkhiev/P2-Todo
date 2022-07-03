@@ -1,0 +1,46 @@
+.sidebar_table_item {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar_table_item_btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.sidebar_table_item:hover {
+  background-color: rgb(233, 233, 233);
+}
+
+.sidebar_table_item:active {
+  background-color: rgb(199, 198, 198);
+}
+
+.sidebar_table_item:focus {
+  border: rgb(155, 155, 155);
+}
+
+
+.sidebar_table_item_options {
+  border-radius: 3px;
+}
+
+.sidebar_table_item_options:hover {
+  background-color: rgb(170, 170, 170);
+}
+
+.sidebar_table_item_options:active {
+  background-color: rgb(105, 105, 105);
+}
+
+.sidebar_table_item_options:focus {
+  border: rgb(82, 82, 82);
+}
+
+
+.sidebar_options_dropdown_menu {
+  position: absolute;
+  z-index: 1001;
+}

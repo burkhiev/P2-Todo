@@ -5,7 +5,7 @@ import { POSITION_STEP } from '../Consts';
 import { getTitle } from '../Lorem';
 
 const mockLists: Array<ITodoList> = [];
-const listsCount = 4;
+const listsCount = 10;
 
 for (let i = 0; i < listsCount; i += 1) {
   const column: ITodoList = {

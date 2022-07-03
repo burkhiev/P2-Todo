@@ -1,4 +1,6 @@
-import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
+import {
+  createSlice, createEntityAdapter, nanoid,
+} from '@reduxjs/toolkit';
 import { ITodoTable } from '../../models/ITodoTable';
 
 import { RootState } from '../store';
@@ -16,7 +18,16 @@ const tableSlice = createSlice({
   name: 'table',
   initialState,
   reducers: {
-    createTable: tableAdapter.addOne,
+    createTable: {
+      reducer: tableAdapter.addOne,
+      prepare(name: string) {
+        const newTable: ITodoTable = {
+          name,
+          tableId: nanoid(),
+        };
+        return { payload: newTable };
+      },
+    },
     updateTable: tableAdapter.updateOne,
     deleteTable: tableAdapter.removeOne,
   },
@@ -32,6 +43,9 @@ export const {
 
 export const {
   selectAll: selectAllTables,
-  selectIds: selectAllTableIds,
   selectById: selectTableById,
 } = tableAdapter.getSelectors<RootState>((state) => state.todo.table);
+
+export const selectAllTableIds = (state: RootState) =>
+  selectAllTables(state)
+    .map((table) => table.tableId);

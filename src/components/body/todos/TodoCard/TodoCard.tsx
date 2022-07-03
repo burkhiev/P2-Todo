@@ -12,12 +12,15 @@ import useTodoDropInfo from '../../../../hooks/dnd/useTodoDropInfo';
 
 export interface ITodoCardProps {
   todoId: TodoId,
+  isOverList: boolean,
   setPlaceholder: (todoId: TodoId) => void,
   updateList: () => void
 }
 
 export default function TodoCard(props: ITodoCardProps) {
-  const { todoId, setPlaceholder, updateList } = props;
+  const {
+    todoId, isOverList, setPlaceholder, updateList,
+  } = props;
 
   const todo = useAppSelector((state) => selectTodoById(state, todoId));
 
@@ -75,16 +78,21 @@ export default function TodoCard(props: ITodoCardProps) {
     );
   }
 
+  const truncateCss = isOverList ? 'text-truncate text-nowrap' : '';
+  const btnCss = 'flex-grow-1 p-2 border rounded bg-white text-start text-break';
+
   return (
     <div ref={drop} className={`v-stack pb-1 ${isDragging ? 'd-none' : ''}`}>
       {editForm}
       <div ref={drag} className="d-flex rounded border-bottom">
         <button
           type="button"
-          className="flex-grow-1 border rounded bg-white text-start"
+          className={`${btnCss} ${truncateCss}`}
           onClick={onOpenEdit}
         >
-          <div className={`d-flex ${styles.appearing_pen_container}`}>
+          <div
+            className={`d-flex ${styles.appearing_pen_container}`}
+          >
             <span>{todo.title}</span>
             <span className={`ms-auto bi bi-pen text-muted fs-6 ${styles.appearing_pen}`} />
           </div>

@@ -1,7 +1,7 @@
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 
-import DndTypes from '../../DndTypes';
-import { IOnDropReturnType } from '../../components/todo/table/Table';
+import DndTypes from '../../service/DndTypes';
+import { IOnDropReturnType } from '../../components/body/table/Table';
 import { ITodoList } from '../../models/ITodoList';
 import { moveList } from '../../store/todo/listSlice';
 import { useAppDispatch } from '../reduxHooks';

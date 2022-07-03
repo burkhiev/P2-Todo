@@ -82,6 +82,7 @@
     "ignorePatterns":[
         "**/*.css",
         "**/*.json",
+        "**/*.jsonc",
         "*.js"
     ],
     "settings": {

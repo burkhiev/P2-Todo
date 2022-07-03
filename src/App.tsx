@@ -11,7 +11,7 @@ import PageBody from './components/body/PageBody';
 import ErrorBoundary from './service/ErrorBoundary';
 import store from './store/store';
 import Curtain from './components/serviceComponents/Curtain';
-import RoutePathes from './RoutePathes';
+import RoutePathes from './service/RoutePathes';
 
 export default function App() {
   return (

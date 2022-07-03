@@ -6,7 +6,7 @@ import { getTitle, getSentence } from '../Lorem';
 import random from '../random';
 
 const mockTodos: Array<ITodo> = [];
-const todosCount = 12;
+const todosCount = 30;
 const date = new Date();
 
 for (let i = 0; i < todosCount; i += 1) {

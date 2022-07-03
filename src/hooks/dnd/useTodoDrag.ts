@@ -1,6 +1,6 @@
 import { ConnectDragSource, useDrag } from 'react-dnd';
 
-import DndTypes from '../../DndTypes';
+import DndTypes from '../../service/DndTypes';
 import { ITodo, TodoId } from '../../models/ITodo';
 import { selectTodoById } from '../../store/todo/todoSlice';
 import { useAppSelector } from '../reduxHooks';

@@ -122,6 +122,7 @@ export default function List(props: IListProps) {
       <TodoCard
         key={todoId}
         todoId={todoId}
+        isOverList={todoIsOver}
         setPlaceholder={setTodoPlaceholder}
         updateList={setNewTodos}
       />

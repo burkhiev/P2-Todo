@@ -3,9 +3,16 @@ import { nanoid } from '@reduxjs/toolkit';
 import { ITodoTable } from '../../models/ITodoTable';
 import { getTitle } from '../Lorem';
 
-const mockTable: ITodoTable = {
-  tableId: nanoid(),
-  name: getTitle(),
-};
+const tablesCount = 5;
+const tables: ITodoTable[] = [];
 
-export default [mockTable];
+for (let i = 0; i < tablesCount; i += 1) {
+  const table: ITodoTable = {
+    tableId: nanoid(),
+    name: getTitle(),
+  };
+
+  tables.push(table);
+}
+
+export default tables;

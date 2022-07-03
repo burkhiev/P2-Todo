@@ -1,6 +1,6 @@
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 
-import DndTypes from '../../DndTypes';
+import DndTypes from '../../service/DndTypes';
 import { ITodoList } from '../../models/ITodoList';
 
 interface ITodoListDropCollectProps {

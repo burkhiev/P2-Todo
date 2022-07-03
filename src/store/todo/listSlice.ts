@@ -15,7 +15,7 @@ import { ITodoList, TodoListId } from '../../models/ITodoList';
 import { TodoTableId } from '../../models/ITodoTable';
 import TodoMocks from '../../service/mocks/TodoMocks';
 import MathService from '../../service/MathService';
-import { TodoListDropSide } from '../../components/todo/table/Table';
+import { TodoListDropSide } from '../../components/body/table/Table';
 
 interface IMoveListPayload {
   /**
@@ -71,6 +71,7 @@ const listSlice = createSlice({
       },
     },
     removeList: listAdapter.removeOne,
+    removeManyLists: listAdapter.removeMany,
     updateList: listAdapter.updateOne,
     moveList(state, action: PayloadAction<IMoveListPayload>) {
       const { draggedListId, targetListId, dropSide } = action.payload;
@@ -201,6 +202,7 @@ export default listSlice.reducer;
 export const {
   addList,
   removeList,
+  removeManyLists,
   updateList,
   moveList,
 } = listSlice.actions;
@@ -210,10 +212,10 @@ export const {
   selectById: selectTodoListById,
 } = listAdapter.getSelectors<RootState>((state) => state.todo.lists);
 
-export const selectTodoListsByTableId = (state: RootState, tableId: TodoTableId) =>
+export const selectListsByTableId = (state: RootState, tableId: TodoTableId) =>
   selectAllTodoLists(state)
     .filter((list) => list.tableId === tableId);
 
-export const selectTodoListIdsByTableId = (state: RootState, tableId: TodoTableId) =>
-  selectTodoListsByTableId(state, tableId)
+export const selectListIdsByTableId = (state: RootState, tableId: TodoTableId) =>
+  selectListsByTableId(state, tableId)
     .map((list) => list.listId);

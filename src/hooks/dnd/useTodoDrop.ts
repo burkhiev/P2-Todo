@@ -1,6 +1,6 @@
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 
-import DndTypes from '../../DndTypes';
+import DndTypes from '../../service/DndTypes';
 import { ITodo } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
 import { moveTodo } from '../../store/todo/todoSlice';
