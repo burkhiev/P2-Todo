@@ -1,26 +1,27 @@
-import { INVALID_TABLE_ID } from '../Consts';
+import { faker } from '@faker-js/faker';
+import { INVALID_LIST_ID, INVALID_TABLE_ID } from '../Consts';
 
 import tables from './MockTable';
 import lists from './MockLists';
 import todos from './MockTodos';
-import random from '../random';
 
 // Сопоставление задач со списками
 for (let i = 0; i < todos.length; i += 1) {
-  const todo = todos[i];
-
-  todo.listId = lists[random.int(0, lists.length - 1)].listId;
+  if (lists.length) {
+    const index = faker.mersenne.rand(lists.length, 0);
+    todos[i].listId = lists[index].id;
+  } else {
+    todos[i].listId = INVALID_TABLE_ID;
+  }
 }
 
-// Сопоставление cписков задач с таблицей
+// Сопоставление списков задач с таблицей
 for (let i = 0; i < lists.length; i += 1) {
-  const list = lists[i];
-
   if (tables.length > 0) {
-    const table = tables[random.int(0, tables.length - 1)];
-    list.tableId = table.tableId;
+    const index = faker.mersenne.rand(tables.length, 0);
+    lists[i].tableId = tables[index].id;
   } else {
-    list.tableId = INVALID_TABLE_ID;
+    lists[i].tableId = INVALID_LIST_ID;
   }
 }
 

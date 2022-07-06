@@ -62,6 +62,7 @@ export default function ListTitleEditor(props: IListTitleEditorProps) {
       mustValidate
       isValid={isTitleValid}
       isValidated={isValidated}
+      isLoading={false}
       onChange={onTitleChange}
       onEntered={onSave}
       takeFocus

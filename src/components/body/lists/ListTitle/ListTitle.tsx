@@ -33,7 +33,7 @@ export default function ListTitle(props: IListTitleProps) {
   let content: JSX.Element;
 
   if (isEdit) {
-    content = <ListTitleEditor listId={list.listId} onSave={onClose} />;
+    content = <ListTitleEditor listId={list.id} onSave={onClose} />;
   } else {
     content = (
       <button

@@ -1,16 +1,21 @@
+/* eslint-disable no-console */
 import React from 'react';
 import ReactDomClient from 'react-dom/client';
 
 import App from './App';
-
-const rootTag = document.getElementById('root');
+import makeServer from './mock-api/mirageApi';
 
 console.log(process.env.NODE_ENV);
 
-if (rootTag) {
-  const root = ReactDomClient.createRoot(rootTag);
+if (process.env.NODE_ENV === 'development') {
+  makeServer({});
+}
+
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  const root = ReactDomClient.createRoot(rootElement);
   root.render(<App />);
 } else {
-  // eslint-disable-next-line no-console
-  console.error('root section is not found');
+  console.error('root element is not found');
 }

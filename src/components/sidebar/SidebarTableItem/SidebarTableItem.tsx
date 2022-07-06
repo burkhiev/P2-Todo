@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 
 import styles from './SidebarTableItem.css';
 
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import { TodoTableId } from '../../../../models/ITodoTable';
-import { selectTableById } from '../../../../store/todo/tableSlice';
-import useTableService from '../../../../hooks/useTableService';
-
-const INVALID_TABLE_ID_ERR_MSG = 'Invalid argument error. Non-existent "tableId" received.';
+import { useAppSelector } from '../../../hooks/reduxHooks';
+import { TodoTableId } from '../../../models/ITodoTable';
+import { selectTableById, useDeleteTable } from '../../../store/api/apiSlice';
+import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
 interface ISidebarTableItemProps {
   tableId: TodoTableId,
-  itsFirst: boolean,
+  selectedTableId: TodoTableId | undefined,
   curDropdownTableId: TodoTableId | undefined,
+  itsFirst: boolean,
   selectTable: (id: TodoTableId) => void,
   onDeleteTable: (tableId: TodoTableId) => void,
   setCurDropdownTableId: (tableId?: TodoTableId) => void
@@ -21,8 +20,9 @@ interface ISidebarTableItemProps {
 export default function SidebarTableItem(props: ISidebarTableItemProps) {
   const {
     tableId,
-    itsFirst,
+    selectedTableId,
     curDropdownTableId: curTableId,
+    itsFirst,
     selectTable,
     onDeleteTable,
     setCurDropdownTableId,
@@ -31,23 +31,27 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   const table = useAppSelector((state) => selectTableById(state, tableId));
 
   if (!table) {
-    throw new Error(INVALID_TABLE_ID_ERR_MSG);
+    throw new InvalidArgumentError('Non-existent "tableId" received.');
   }
 
-  const { removeTable } = useTableService(table.tableId);
+  const [dropdownIsOpened, setDropdownIsOpened] = useState(false);
+  const [deleteTable, { isLoading }] = useDeleteTable();
 
   function onSelect() {
     selectTable(tableId);
   }
 
-  function onDelete() {
+  async function onDelete() {
     if (table) {
-      removeTable();
-      onDeleteTable(table.tableId);
+      try {
+        await deleteTable({ id: table.id }).unwrap();
+        onDeleteTable(table.id);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     }
   }
-
-  const [dropdownIsOpened, setDropdownIsOpened] = useState(false);
 
   function onCloseDropdownMenu() {
     setDropdownIsOpened(false);
@@ -56,7 +60,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
 
   function onOpenDropdownMenu(e: React.MouseEvent) {
     e.stopPropagation();
-    setCurDropdownTableId(table?.tableId);
+    setCurDropdownTableId(table?.id);
 
     setDropdownIsOpened(true);
     document.body.addEventListener('click', onCloseDropdownMenu);
@@ -64,7 +68,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
 
   let dropdownMenu: any;
 
-  if (curTableId === table.tableId && dropdownIsOpened) {
+  if (curTableId === table.id && dropdownIsOpened) {
     dropdownMenu = (
       <div className={`dropdown-menu d-block ${styles.sidebar_options_dropdown_menu}`}>
         <button
@@ -79,13 +83,36 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   }
 
   const margin = itsFirst ? '' : 'mt-1';
+  const selected = selectedTableId === tableId ? 'bg-primary' : '';
+  const selectedText = selectedTableId === tableId ? 'text-white' : '';
+  const placeholder = (isLoading) ? 'placeholder' : '';
+  const bgColor = (isLoading) ? 'bg-danger' : '';
+  const textColor = (isLoading) ? 'text-white' : '';
 
   return (
-    <div className={`d-flex px-3 ${margin} ${styles.sidebar_table_item}`}>
+    <div className={`
+      d-flex
+      px-3
+      rounded
+      placeholder-glow
+      ${margin} 
+      ${selected} 
+      ${bgColor}
+      ${styles.sidebar_table_item}
+    `}
+    >
       <button
         type="button"
         onClick={onSelect}
-        className={`text-start w-100 ${styles.sidebar_table_item_btn}`}
+        className={`
+          text-start
+          text-truncate
+          w-100
+          ${textColor}
+          ${placeholder}
+          ${selectedText} 
+          ${styles.sidebar_table_item_btn}
+        `}
       >
         {table.name}
       </button>
@@ -93,7 +120,10 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
         <button
           type="button"
           onClick={onOpenDropdownMenu}
-          className={`${styles.sidebar_table_item_btn} ${styles.sidebar_table_item_options}`}
+          className={`
+            ${styles.sidebar_table_item_btn} 
+            ${styles.sidebar_table_item_options}
+          `}
         >
           <span className="bi bi-three-dots" />
         </button>

@@ -1,17 +1,20 @@
 import { nanoid } from '@reduxjs/toolkit';
+import { faker } from '@faker-js/faker';
 
 import { ITodoList } from '../../models/ITodoList';
 import { POSITION_STEP } from '../Consts';
-import { getTitle } from '../Lorem';
+import { firstToUpperCase } from '../StringFunctions';
 
 const mockLists: Array<ITodoList> = [];
-const listsCount = 10;
+const listsCount = 15;
 
 for (let i = 0; i < listsCount; i += 1) {
+  const newTitle = faker.commerce.department();
+
   const column: ITodoList = {
-    listId: nanoid(),
+    id: nanoid(),
     tableId: '',
-    title: getTitle(),
+    title: firstToUpperCase(newTitle),
     position: (i + 1) * POSITION_STEP,
   };
 

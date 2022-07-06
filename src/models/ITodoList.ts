@@ -1,7 +1,7 @@
 export type TodoListId = string;
 
 export interface ITodoList {
-  listId: TodoListId,
+  id: TodoListId,
   tableId: string,
   title: string,
   position: number

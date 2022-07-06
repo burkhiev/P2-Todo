@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TodoTableId } from '../../../models/ITodoTable';
+import { TodoTableId } from '../../models/ITodoTable';
 
-import OpenCreateFormBtn from '../buttons/OpenCreateFormBtn';
+import OpenCreateFormBtn from '../body/buttons/OpenCreateFormBtn';
 import SidebarCreateTableForm from './SidebarCreateTableForm';
 
 interface ISidebarTableCreatorExpanderProps {

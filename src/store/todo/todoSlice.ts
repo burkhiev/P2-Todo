@@ -16,7 +16,6 @@ import { RootState } from '../store';
 import { ITodo, TodoId } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
 import { IAddTodoDto } from '../../models/IAddTodoDto';
-import TodoMocks from '../../service/mocks/TodoMocks';
 import MathService from '../../service/MathService';
 import { TodoTableId } from '../../models/ITodoTable';
 
@@ -39,12 +38,11 @@ interface IMoveTodoArgs {
 }
 
 const todoAdapter = createEntityAdapter<ITodo>({
-  selectId: (todo) => todo.todoId,
+  selectId: (todo) => todo.id,
   sortComparer: (a, b) => a.position - b.position,
 });
 
-const emptyInitialState = todoAdapter.getInitialState();
-const initialState = todoAdapter.setAll(emptyInitialState, TodoMocks.todos);
+const initialState = todoAdapter.getInitialState();
 
 const todoSlice = createSlice({
   name: 'todo',
@@ -70,7 +68,7 @@ const todoSlice = createSlice({
         return {
           payload: {
             ...todoDto,
-            todoId: nanoid(),
+            id: nanoid(),
             addedAt: (new Date()).toISOString(),
             position: 0,
           },
@@ -175,7 +173,7 @@ const todoSlice = createSlice({
 
           if (curTodo) {
             const newPos = posFrom + POSITION_STEP * mult;
-            moveCurrentTodo(curTodo.todoId, nextListId, newPos);
+            moveCurrentTodo(curTodo.id, nextListId, newPos);
           }
         }
       }
@@ -186,7 +184,7 @@ const todoSlice = createSlice({
         const newPos = prevPos + POSITION_STEP;
 
         if (positionValid(newPos)) {
-          moveCurrentTodo(todo.todoId, nextListId, newPos);
+          moveCurrentTodo(todo.id, nextListId, newPos);
         } else {
           setPositions(0, MIN_POSITION);
         }
@@ -195,7 +193,7 @@ const todoSlice = createSlice({
         const newPos = prevPos + (curPos - prevPos) / 2;
 
         if (positionValid(newPos)) {
-          moveCurrentTodo(todo.todoId, nextListId, newPos);
+          moveCurrentTodo(todo.id, nextListId, newPos);
         } else {
           const insIndex = insertIndex - 1;
           setPositions((insIndex < 0) ? 0 : insIndex, MIN_POSITION);
@@ -228,13 +226,13 @@ export const selectTodosByListId = (state: RootState, listId: TodoListId) =>
 
 export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
   selectTodosByListId(state, listId)
-    .map((todo) => todo.todoId);
+    .map((todo) => todo.id);
 
 export const selectTodoIdsByTableId = (state: RootState, tableId: TodoTableId) => {
   const allLists = Object.values(state.todo.lists.entities);
 
   const lists = allLists.filter((list) => list?.tableId === tableId);
-  const listsTodos = lists.map((list) => selectTodoIdsByListId(state, list!.listId));
+  const listsTodos = lists.map((list) => selectTodoIdsByListId(state, list!.id));
 
   const todos: TodoId[] = [];
   listsTodos.forEach((lt) => lt.forEach((todoId) => todos.push(todoId)));

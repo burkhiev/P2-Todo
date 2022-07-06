@@ -3,13 +3,16 @@ import React from 'react';
 import BtnStyles from './BootstrapBtnStyles';
 
 interface ICreateBtnsProps {
+  acceptBtnText?: string,
+  isLoading: boolean,
   onAccept: () => void,
-  onClose: () => void,
-  acceptBtnText?: string
+  onClose: () => void
 }
 
 export default function CreateBtns(props: ICreateBtnsProps) {
-  const { onAccept, onClose: onCloseAction, acceptBtnText } = props;
+  const {
+    acceptBtnText, isLoading, onAccept, onClose: onCloseAction,
+  } = props;
 
   function onAction(e: React.MouseEvent<any>) {
     e.stopPropagation();
@@ -21,18 +24,22 @@ export default function CreateBtns(props: ICreateBtnsProps) {
     onCloseAction();
   }
 
+  const btnText = (isLoading ? '' : acceptBtnText ?? 'Добавить');
+  const placeholderCss = (isLoading ? 'placeholder' : '');
+  const visible = (isLoading ? 'd-none' : '');
+
   return (
     <div className="d-flex">
       <button
         type="button"
-        className={BtnStyles.accept}
+        className={`${BtnStyles.accept} ${placeholderCss}`}
         onClick={onAction}
       >
-        {acceptBtnText ?? 'Добавить'}
+        {btnText}
       </button>
       <button
         type="button"
-        className={BtnStyles.close}
+        className={`${BtnStyles.close} ${visible}`}
         onClick={onClose}
       >
         <span className={BtnStyles.closeIcon} />

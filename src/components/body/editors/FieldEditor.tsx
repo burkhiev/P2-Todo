@@ -8,10 +8,9 @@ interface ITitleEditorProps {
   isValidated?: boolean,
   useTextarea?: boolean,
   takeFocus?: boolean,
+  isLoading: boolean,
   onChange: (value: string) => void,
-  onEntered?: () => void,
-  onTextSelectionOn?: () => void,
-  onTextSelectionOff?: () => void
+  onEntered?: () => void
 }
 
 export default function FieldEditor(props: ITitleEditorProps) {
@@ -22,18 +21,21 @@ export default function FieldEditor(props: ITitleEditorProps) {
     mustValidate,
     isValid,
     isValidated,
+    isLoading,
     onChange: onChangeCallback,
     onEntered: onEnteredCallback = () => { },
     takeFocus = false,
   } = props;
 
   function onChange(e: React.ChangeEvent<any>) {
-    const { value } = e.target;
-    onChangeCallback(value ?? '');
+    if (!isLoading) {
+      const { value } = e.target;
+      onChangeCallback(value ?? '');
+    }
   }
 
   function onEntered(e: React.KeyboardEvent<any>) {
-    if (e.key === 'Enter') {
+    if (!isLoading && e.key === 'Enter') {
       onEnteredCallback();
     }
   }
@@ -43,14 +45,15 @@ export default function FieldEditor(props: ITitleEditorProps) {
   }
 
   let titleInput: any;
-  const validCss = (mustValidate && isValidated && !isValid) ? 'is-invalid' : '';
+  const validStyle = (mustValidate && isValidated && !isValid) ? 'is-invalid' : '';
+  const placeholderStyle = (isLoading ? 'placeholder' : '');
 
   if (useTextarea) {
     titleInput = (
       <textarea
         value={text}
         placeholder={placeholder}
-        className={`form-control form-control-sm ${validCss}`}
+        className={`form-control form-control-sm ${placeholderStyle} ${validStyle}`}
         rows={2}
         onChange={onChange}
         onKeyDown={onEntered}
@@ -64,7 +67,7 @@ export default function FieldEditor(props: ITitleEditorProps) {
         type="text"
         value={text}
         placeholder={placeholder}
-        className={`form-control form-control-sm ${validCss}`}
+        className={`form-control form-control-sm ${placeholderStyle} ${validStyle}`}
         onChange={onChange}
         onKeyDown={onEntered}
         onClick={onClick}
@@ -73,5 +76,9 @@ export default function FieldEditor(props: ITitleEditorProps) {
     );
   }
 
-  return titleInput;
+  return (
+    <div className="placeholder-glow">
+      {titleInput}
+    </div>
+  );
 }

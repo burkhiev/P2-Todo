@@ -22,7 +22,7 @@ export default function useTodoDrop(
   const [collect, drop] = useDrop<ITodo, any, ITodoDropCollectProps>(
     () => ({
       accept: DndTypes.CARD,
-      drop: ({ todoId }) => {
+      drop: ({ id: todoId }) => {
         dispatch(moveTodo({
           todoId,
           newListId,

@@ -96,6 +96,7 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
+          isLoading={false}
           onChange={onTitleChange}
           onEntered={onSaveTodo}
           takeFocus
@@ -105,6 +106,7 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
         <FieldEditor
           text={description ?? ''}
           placeholder="Описание карточки"
+          isLoading={false}
           onChange={setDescription}
           onEntered={onSaveTodo}
         />

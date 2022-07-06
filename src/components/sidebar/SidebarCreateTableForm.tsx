@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import useTableService from '../../../hooks/useTableService';
-import useTodoValidators from '../../../hooks/useTodoValidators';
-import { TodoTableId } from '../../../models/ITodoTable';
-import CreateBtns from '../buttons/CreateBtns';
-import FieldEditor from '../editors/FieldEditor';
+import useTodoValidators from '../../hooks/useTodoValidators';
+import { TodoTableId } from '../../models/ITodoTable';
+import { useCreateTable } from '../../store/api/apiSlice';
+import CreateBtns from '../body/buttons/CreateBtns';
+import FieldEditor from '../body/editors/FieldEditor';
 
 interface ISidebarCreateTableFormProps {
   onClose?: (tableId?: TodoTableId) => void
@@ -18,25 +18,35 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
   const [isTitleValid, setIsTitleValid] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
   const [validateTitle] = useTodoValidators();
+  const [addTable, { isLoading }] = useCreateTable();
 
   function onTitleChange(value: string) {
     setName(value);
     setIsTitleValid(validateTitle(value));
   }
 
-  const { addTable } = useTableService();
-
-  function onAddTodo() {
+  async function onAddTodo() {
     setIsValidated(true);
 
     if (isTitleValid) {
-      const newTableId = addTable(name);
-      onClose(newTableId);
+      try {
+        const result = await addTable({ name }).unwrap();
+        onClose(result.id);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log('error :>> ', error);
+      }
     }
   }
 
+  let onAdd = onAddTodo;
+
+  if (isLoading) {
+    onAdd = async () => { };
+  }
+
   return (
-    <>
+    <div>
       <div className="mb-2">
         <FieldEditor
           text={name}
@@ -44,16 +54,18 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
+          isLoading={isLoading}
           onChange={onTitleChange}
-          onEntered={onAddTodo}
+          onEntered={onAdd}
           takeFocus
         />
       </div>
       <CreateBtns
-        onAccept={onAddTodo}
-        onClose={onClose}
         acceptBtnText="Добавить"
+        isLoading={isLoading}
+        onAccept={onAdd}
+        onClose={onClose}
       />
-    </>
+    </div>
   );
 }

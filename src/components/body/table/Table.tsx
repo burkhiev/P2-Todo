@@ -4,7 +4,6 @@ import styles from './Table.css';
 
 import { TodoTableId } from '../../../models/ITodoTable';
 import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectTableById } from '../../../store/todo/tableSlice';
 import ListCreatorExpander from '../lists/ListCreator/ListCreatorExpander';
 import ListDragDropWrap from '../lists/ListDragDropWrap';
 import { selectListsByTableId } from '../../../store/todo/listSlice';
@@ -13,6 +12,7 @@ import { TodoListId } from '../../../models/ITodoList';
 import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
 import TablePlaceholder from './TablePlaceholder/TablePlaceholder';
+import { selectTableById } from '../../../store/api/apiSlice';
 
 // Баг ESLint
 // eslint-disable-next-line no-shadow
@@ -33,11 +33,12 @@ export interface IOnDropReturnType {
 }
 
 interface ITableProps {
-  tableId?: TodoTableId
+  tableId?: TodoTableId,
+  isLoading: boolean
 }
 
 export default function Table(props: ITableProps) {
-  const { tableId } = props;
+  const { tableId, isLoading } = props;
 
   const table = useAppSelector((state) => selectTableById(state, tableId ?? INVALID_TABLE_ID));
   const lists = useAppSelector((state) => selectListsByTableId(state, tableId ?? INVALID_TABLE_ID));
@@ -110,8 +111,8 @@ export default function Table(props: ITableProps) {
     if (fadedListIndex !== index) {
       content = (
         <ListDragDropWrap
-          listId={list.listId}
-          key={list.listId}
+          listId={list.id}
+          key={list.id}
           onDragging={() => onDragging(index)}
           onDropOver={() => onDropOver(index)}
         />
@@ -125,7 +126,7 @@ export default function Table(props: ITableProps) {
       const placeholder = (
         <ListPlaceholder
           key="PLACEHOLDER"
-          listId={list.listId}
+          listId={list.id}
           placeholderDropSide={placeholderDropSide}
           placeholderIndex={placeholderIndex}
           onDrop={onDrop}
@@ -137,7 +138,7 @@ export default function Table(props: ITableProps) {
     }
 
     return (
-      <React.Fragment key={list.listId}>
+      <React.Fragment key={list.id}>
         {beforeContent}
         {content}
         {afterContent}
@@ -147,24 +148,24 @@ export default function Table(props: ITableProps) {
 
   let content: any;
 
-  if (table) {
+  if (!isLoading && table) {
     content = (
-      <div className={`v-stack border pb-3 ${styles.current_table}`}>
-        <div className="m-5 mt-4 fs-4">
+      <div className={`bg-white ${styles.table_container}`}>
+        <div className={styles.table_name}>
           {table.name}
         </div>
-        <div className="container">
-          <div className="row gy-4 row-cols-sm-2 row-cols-xl-4">
+        <div className={`container m-3 ${styles.table}`}>
+          <div className={`row g-4 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 ${styles.table}`}>
             {listContent}
-            <ListCreatorExpander key={tableId} tableId={table.tableId} />
+            <ListCreatorExpander key={tableId} tableId={table.id} />
           </div>
         </div>
       </div>
     );
   } else {
     content = (
-      <div className={`border ${styles.current_table}`}>
-        <TablePlaceholder />
+      <div className={`border bg-white ${styles.table}`}>
+        <TablePlaceholder isLoading={isLoading} />
       </div>
     );
   }

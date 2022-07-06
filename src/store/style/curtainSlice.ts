@@ -29,4 +29,4 @@ export const {
   curtainOn,
 } = curtainSlice.actions;
 
-export const selectCurtainState = (state: RootState) => state.service.curtain.enable;
+export const selectCurtainState = (state: RootState) => state.style.curtain.enable;

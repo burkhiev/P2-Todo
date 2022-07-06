@@ -45,6 +45,7 @@ export default function ListCreatorForm(props: IListCreatorFormProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
+          isLoading={false}
           onChange={onTitleChange}
           onEntered={onAddList}
           takeFocus
@@ -52,9 +53,10 @@ export default function ListCreatorForm(props: IListCreatorFormProps) {
       </div>
       <div>
         <CreateBtns
+          acceptBtnText="Добавить"
+          isLoading={false}
           onAccept={onAddList}
           onClose={onClose}
-          acceptBtnText="Добавить"
         />
       </div>
     </>

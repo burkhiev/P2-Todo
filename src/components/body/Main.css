@@ -1,0 +1,18 @@
+.main {
+  height: 100%;
+  /* border: 2px solid rgb(101, 53, 145); */
+}
+
+.main_sidebar_sticky {
+  position: fixed;
+  top: 25px;
+  /* top: 60px; */
+  min-height: 100%;
+  height: auto;
+  /* border: 2px solid rgb(24, 172, 194); */
+}
+
+.main_table_container {
+  height: 100%;
+  /* border: 2px solid rgb(24, 172, 194); */
+}

@@ -13,7 +13,6 @@ import {
 import { RootState } from '../store';
 import { ITodoList, TodoListId } from '../../models/ITodoList';
 import { TodoTableId } from '../../models/ITodoTable';
-import TodoMocks from '../../service/mocks/TodoMocks';
 import MathService from '../../service/MathService';
 import { TodoListDropSide } from '../../components/body/table/Table';
 
@@ -35,12 +34,11 @@ interface IMoveListPayload {
 }
 
 const listAdapter = createEntityAdapter<ITodoList>({
-  selectId: (list) => list.listId,
+  selectId: (list) => list.id,
   sortComparer: (a, b) => a.position - b.position,
 });
 
-const emptyInitialState = listAdapter.getInitialState();
-const initialState = listAdapter.setAll(emptyInitialState, TodoMocks.lists);
+const initialState = listAdapter.getInitialState();
 
 const listSlice = createSlice({
   name: 'list',
@@ -61,7 +59,7 @@ const listSlice = createSlice({
       prepare(tableId: TodoTableId, title: string): PayloadAction<ITodoList> {
         return {
           payload: {
-            listId: nanoid(),
+            id: nanoid(),
             title,
             tableId,
             position: 0,
@@ -162,7 +160,7 @@ const listSlice = createSlice({
 
       if (numCount <= MAX_POSITION_FRACTION_DIGITS_NUMBER) {
         listAdapter.updateOne(state, {
-          id: draggedList.listId,
+          id: draggedList.id,
           changes: { position: newListPos },
         });
       } else {
@@ -185,7 +183,7 @@ const listSlice = createSlice({
             const newPos = newPosBegin + POSITION_STEP * mult;
 
             listAdapter.updateOne(state, {
-              id: list.listId,
+              id: list.id,
               changes: { position: newPos },
             });
 
@@ -218,4 +216,4 @@ export const selectListsByTableId = (state: RootState, tableId: TodoTableId) =>
 
 export const selectListIdsByTableId = (state: RootState, tableId: TodoTableId) =>
   selectListsByTableId(state, tableId)
-    .map((list) => list.listId);
+    .map((list) => list.id);

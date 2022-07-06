@@ -4,7 +4,7 @@ import { nanoid } from '@reduxjs/toolkit';
 import { TodoListId } from '../../../../models/ITodoList';
 import { useAppSelector } from '../../../../hooks/reduxHooks';
 import TodoCard from '../../todos/TodoCard/TodoCard';
-import TableStyles from './bootstrapListStyles';
+import ListStyles from './bootstrapListStyles';
 import CreateTodoExpander from '../../todos/CreateTodoExpander';
 import ListOptions from '../ListOptions/ListOptions';
 import ListTitle from '../ListTitle/ListTitle';
@@ -71,7 +71,7 @@ export default function List(props: IListProps) {
    * @returns void
    */
   function setTodoPlaceholder(todoId?: TodoId) {
-    if (draggedTodo?.todoId === todoId) {
+    if (draggedTodo?.id === todoId) {
       return;
     }
 
@@ -130,8 +130,8 @@ export default function List(props: IListProps) {
   });
 
   return (
-    <div ref={todoDrop} className={`${TableStyles.list}`}>
-      <div className="row row-cols-2 g-0 m-0 mb-2 ">
+    <div ref={todoDrop} className={`${ListStyles.list}`}>
+      <div className="row row-cols-2 g-0 m-0 mb-2">
         <div className="col-9 p-2">
           <ListTitle listId={listId} />
         </div>

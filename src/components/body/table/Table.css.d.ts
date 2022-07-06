@@ -1,4 +1,6 @@
 declare const styles: {
-  readonly 'current_table': string;
+  readonly 'table_container': string;
+  readonly 'table': string;
+  readonly 'table_name': string;
 };
 export = styles;

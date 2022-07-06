@@ -32,7 +32,7 @@ export default function TodoCard(props: ITodoCardProps) {
 
   const [showEditForm, setShowEditForm] = useState<any>(null);
 
-  const [{ isDragging }, drag] = useTodoDrag(todo.todoId);
+  const [{ isDragging }, drag] = useTodoDrag(todo.id);
   const [{ todoIsOver }, drop] = useTodoDropInfo();
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function TodoCard(props: ITodoCardProps) {
   if (showEditForm) {
     editForm = (
       <EditTodoForm
-        todoId={todo.todoId}
+        todoId={todo.id}
         onClose={onCloseEdit}
         onRemove={updateList}
       />

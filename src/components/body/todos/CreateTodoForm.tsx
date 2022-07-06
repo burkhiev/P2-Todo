@@ -45,15 +45,17 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
+          isLoading={false}
           onChange={onTitleChange}
           onEntered={onAddTodo}
           takeFocus
         />
       </div>
       <CreateBtns
+        acceptBtnText="Добавить"
+        isLoading={false}
         onAccept={onAddTodo}
         onClose={onClose}
-        acceptBtnText="Добавить"
       />
     </>
   );

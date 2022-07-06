@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import classnames from 'classnames';
 
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import useTodoValidators from '../../../../hooks/useTodoValidators';
-import { TodoTableId } from '../../../../models/ITodoTable';
-import { selectTableById } from '../../../../store/todo/tableSlice';
-import useTableService from '../../../../hooks/useTableService';
+import { useAppSelector } from '../../../hooks/reduxHooks';
+import useTodoValidators from '../../../hooks/useTodoValidators';
+import { TodoTableId } from '../../../models/ITodoTable';
+import { selectTableById, useUpdateTable } from '../../../store/api/apiSlice';
+import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
 const INVALID_TABLE_ID_ERR_MSG = 'Invalid argument error.'
   + ' Non-existed "tableId" received.';
@@ -20,10 +19,12 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
   const table = useAppSelector((state) => selectTableById(state, tableId));
 
   if (!table) {
-    throw new Error(INVALID_TABLE_ID_ERR_MSG);
+    throw new InvalidArgumentError(INVALID_TABLE_ID_ERR_MSG);
   }
 
   const [validateName] = useTodoValidators();
+  const [updateTable, { isLoading }] = useUpdateTable();
+
   const [name, setName] = useState(table.name);
   const [nameIsValid, setNameIsValid] = useState(validateName(table.name));
   const [isValidated, setIsValidated] = useState(false);
@@ -34,9 +35,7 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
     setName(value);
   }
 
-  const { updateTable } = useTableService(table.tableId);
-
-  function onEntered(e: React.KeyboardEvent<HTMLInputElement>) {
+  async function onEntered(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Escape') {
       onClose();
     }
@@ -48,7 +47,7 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
     setIsValidated(true);
 
     if (nameIsValid && table) {
-      updateTable(name);
+      await updateTable({ id: table.id, name }).unwrap();
       onClose();
     }
   }
@@ -57,23 +56,38 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
     e.stopPropagation();
   }
 
-  const inputClasses = ['form-control'];
+  let content: any;
+  let invalidStyle: any;
 
   if (isValidated && !nameIsValid) {
-    inputClasses.push('is-invalid');
+    invalidStyle = 'is-invalid';
   }
 
-  return (
-    <div>
+  if (isLoading) {
+    content = (
+      <input
+        type="text"
+        className="w-100 placeholder placeholder-lg"
+        autoFocus={false}
+      />
+    );
+  } else {
+    content = (
       <input
         type="text"
         value={name}
         onChange={onChange}
         onClick={onClick}
         onKeyDown={onEntered}
-        className={classnames(inputClasses)}
+        className={`w-100 form-control form-control-sm ${invalidStyle}`}
         autoFocus
       />
+    );
+  }
+
+  return (
+    <div className="w-100 ms-2 border placeholder-glow">
+      {content}
     </div>
   );
 }

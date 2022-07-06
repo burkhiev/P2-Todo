@@ -14,13 +14,18 @@ export default function ListOptions(props: IListOptionsProps) {
 
   const { removeList } = useListService(listId);
 
+  function onOpenOptions(e: React.MouseEvent) {
+    e.stopPropagation();
+  }
+
   return (
     <div className="dropend">
       <button
         type="button"
-        className="btn btn-light align-self-start"
         data-bs-toggle="dropdown"
         data-bs-offset="-5,10"
+        onClick={onOpenOptions}
+        className="btn btn-light align-self-start"
       >
         <span className="bi bi-three-dots" />
       </button>

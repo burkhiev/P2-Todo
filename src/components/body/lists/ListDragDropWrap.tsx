@@ -23,7 +23,7 @@ export default function ListDragDropWrap(props: IListProps) {
     throw new Error('ListDragDropWrap component must have a valid "listId".');
   }
 
-  const [{ isDragging }, listDrag] = useTodoListDrag(list.listId);
+  const [{ isDragging }, listDrag] = useTodoListDrag(list.id);
   const [{ listIsOver }, listDrop] = useTodoListDropInfo();
 
   useEffect(() => {

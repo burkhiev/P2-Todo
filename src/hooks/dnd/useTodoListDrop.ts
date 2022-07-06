@@ -20,7 +20,7 @@ export default function useTodoListDrop(
   const [collect, drop] = useDrop<ITodoList, any, IUseTodoListDropCollectProps>(
     () => ({
       accept: DndTypes.LIST,
-      drop: ({ listId }) => {
+      drop: ({ id: listId }) => {
         const dropInfo = onDrop();
 
         if (!dropInfo) {

@@ -20,7 +20,7 @@ export default function TodoCardPlaceholder(props: ITodoCardPlaceholderProps) {
       <div className="d-flex rounded border-bottom">
         <button
           type="button"
-          className="d-block flex-grow-1 p-4 btn rounded bg-success opacity-50 text-start"
+          className="d-block flex-grow-1 p-4 btn rounded bg-secondary opacity-50 text-start"
         >
           <span className="visually-hidden">placeholder</span>
         </button>
