@@ -9,6 +9,8 @@ import SidebarTableTitle from '../SidebarTableTitle/SidebarTableTitle';
 import SidebarTableCreatorExpander from '../SidebarTableCreatorExpander';
 import { selectAllTablesIds } from '../../../store/api/apiSlice';
 
+export const testId_SidebarList = 'SidebarList';
+
 interface ISidebarProps {
   tableId?: TodoTableId,
   selectTable: (id?: TodoTableId) => void
@@ -62,7 +64,7 @@ export default function Sidebar(props: ISidebarProps) {
       curDropdownTableId={curDropdownTableId}
       itsFirst={index === 0}
       setCurDropdownTableId={setCurDropdownTableId}
-      selectTable={selectTable}
+      onSelectTable={selectTable}
       onDeleteTable={onDeleteTable}
     />
   ));
@@ -72,7 +74,10 @@ export default function Sidebar(props: ISidebarProps) {
       <SidebarTableTitle tableId={tableId} />
       <hr />
       <div>
-        <div className="mb-3">
+        <div
+          className="mb-3"
+          data-testid={testId_SidebarList}
+        >
           {renderedTables}
         </div>
         <div className="mx-2">

@@ -21,9 +21,13 @@ export default function Main() {
 
   useEffect(() => {
     if (isSuccess) {
-      setTableId(tables[0].id ?? INVALID_TABLE_ID);
+      const selectedExists = tables.some((table) => table.id === tableId);
+
+      if (!selectedExists) {
+        setTableId(tables.length > 0 ? tables[0].id : INVALID_TABLE_ID);
+      }
     }
-  }, [isSuccess, tables]);
+  }, [isSuccess, tables, tableId]);
 
   return (
     <main className={`d-flex ${styles.main}`}>

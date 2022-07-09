@@ -37,6 +37,8 @@
                 "allowBind": false
             }
         ],
+        // Для читабельности testid констант
+        "camelcase": "off",
         
         // Позволяет сократить длину строки для удовлетворения правилу ESLint на ограничения длины.
         "implicit-arrow-linebreak": "off",

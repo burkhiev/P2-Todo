@@ -1,20 +1,24 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
 
 import todoReducer from './todo/combinedReducers';
-import styleReducer from './style/styleSlice';
+import styleReducer from './style/combinedReducers';
 import apiSlice from './api/apiSlice';
 
-const store = configureStore({
-  reducer: {
-    todo: todoReducer,
-    style: styleReducer,
-    api: apiSlice.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+const rootReducer = combineReducers({
+  todo: todoReducer,
+  style: styleReducer,
+  api: apiSlice.reducer,
 });
 
-export default store;
+export type RootState = ReturnType<typeof rootReducer>;
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+const setupStore = (preloadedState?: PreloadedState<RootState>) => configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
+  preloadedState,
+});
+
+export type AppStore = ReturnType<typeof setupStore>;
+export type AppDispatch = AppStore['dispatch'];
+
+export default setupStore;

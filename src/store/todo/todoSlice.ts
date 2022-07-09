@@ -2,8 +2,8 @@ import {
   createSlice,
   createEntityAdapter,
   PayloadAction,
-  nanoid,
   Update,
+  nanoid,
 } from '@reduxjs/toolkit';
 
 import {

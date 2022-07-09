@@ -5,9 +5,13 @@ import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../models/ITodoTable';
 import { selectTableById, useUpdateTable } from '../../../store/api/apiSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
+import FieldEditor from '../../body/shared/editors/FieldEditor';
 
 const INVALID_TABLE_ID_ERR_MSG = 'Invalid argument error.'
   + ' Non-existed "tableId" received.';
+
+export const testId_SidebarEditTableTitleForm = 'SidebarEditTableTitleForm';
+export const testId_SidebarEditTableTitleForm_Field = 'SidebarEditTableTitleForm_Field';
 
 interface ISidebarEditTableTitleFormProps {
   tableId: TodoTableId,
@@ -29,21 +33,12 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
   const [nameIsValid, setNameIsValid] = useState(validateName(table.name));
   const [isValidated, setIsValidated] = useState(false);
 
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value ?? '';
+  function onChange(value: string) {
     setNameIsValid(validateName(value));
     setName(value);
   }
 
-  async function onEntered(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Escape') {
-      onClose();
-    }
-
-    if (e.key !== 'Enter') {
-      return;
-    }
-
+  async function onEntered() {
     setIsValidated(true);
 
     if (nameIsValid && table) {
@@ -52,42 +47,23 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
     }
   }
 
-  function onClick(e: React.MouseEvent) {
-    e.stopPropagation();
-  }
-
-  let content: any;
-  let invalidStyle: any;
-
-  if (isValidated && !nameIsValid) {
-    invalidStyle = 'is-invalid';
-  }
-
-  if (isLoading) {
-    content = (
-      <input
-        type="text"
-        className="w-100 placeholder placeholder-lg"
-        autoFocus={false}
-      />
-    );
-  } else {
-    content = (
-      <input
-        type="text"
-        value={name}
-        onChange={onChange}
-        onClick={onClick}
-        onKeyDown={onEntered}
-        className={`w-100 form-control form-control-sm ${invalidStyle}`}
-        autoFocus
-      />
-    );
-  }
-
   return (
-    <div className="w-100 ms-2 border placeholder-glow">
-      {content}
+    <div
+      className="d-flex ps-3 w-100"
+      data-testid={testId_SidebarEditTableTitleForm}
+    >
+      <FieldEditor
+        isLoading={isLoading}
+        onChange={onChange}
+        text={name}
+        isValid={nameIsValid}
+        isValidated={isValidated}
+        mustValidate
+        onEntered={onEntered}
+        placeholder="Введите название"
+        takeFocus
+        testId={testId_SidebarEditTableTitleForm_Field}
+      />
     </div>
   );
 }

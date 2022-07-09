@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
-import store from '../../../store/store';
+import setupStore, { AppStore } from '../../../store/store';
 
 interface IAppProvidersProps {
-  children: React.ReactNode
+  store?: AppStore
 }
 
-export default function AppProviders(props: IAppProvidersProps) {
-  const { children } = props;
+export default function AppProviders(props: PropsWithChildren<IAppProvidersProps>) {
+  const { children, store } = props;
 
   return (
-    <Provider store={store}>
+    <Provider store={store ?? setupStore()}>
       <DndProvider backend={HTML5Backend}>
         {children}
       </DndProvider>

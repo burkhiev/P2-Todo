@@ -7,12 +7,16 @@ import { TodoTableId } from '../../../models/ITodoTable';
 import { selectTableById, useDeleteTable } from '../../../store/api/apiSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
+export const testId_SidebarTableItem = 'SidebarTableItemTestId';
+export const testId_SidebarTableItem_OpenDropdownBtn = 'SidebarTableItem_OpenDropdownBtn';
+export const testId_SidebarTableItem_DeleteBtn = 'SidebarTableItem_DeleteBtn';
+
 interface ISidebarTableItemProps {
   tableId: TodoTableId,
   selectedTableId: TodoTableId | undefined,
   curDropdownTableId: TodoTableId | undefined,
   itsFirst: boolean,
-  selectTable: (id: TodoTableId) => void,
+  onSelectTable: (id: TodoTableId) => void,
   onDeleteTable: (tableId: TodoTableId) => void,
   setCurDropdownTableId: (tableId?: TodoTableId) => void
 }
@@ -23,7 +27,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
     selectedTableId,
     curDropdownTableId: curTableId,
     itsFirst,
-    selectTable,
+    onSelectTable,
     onDeleteTable,
     setCurDropdownTableId,
   } = props;
@@ -38,7 +42,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   const [deleteTable, { isLoading }] = useDeleteTable();
 
   function onSelect() {
-    selectTable(tableId);
+    onSelectTable(tableId);
   }
 
   async function onDelete() {
@@ -75,6 +79,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
           type="button"
           className="dropdown-item"
           onClick={onDelete}
+          data-testid={testId_SidebarTableItem_DeleteBtn}
         >
           Удалить
         </button>
@@ -90,16 +95,19 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   const textColor = (isLoading) ? 'text-white' : '';
 
   return (
-    <div className={`
-      d-flex
-      px-3
-      rounded
-      placeholder-glow
-      ${margin} 
-      ${selected} 
-      ${bgColor}
-      ${styles.sidebar_table_item}
-    `}
+    <div
+      id={table.id}
+      className={`
+        d-flex
+        px-3
+        rounded
+        placeholder-glow
+        ${margin} 
+        ${selected} 
+        ${bgColor}
+        ${styles.sidebar_table_item}
+      `}
+      data-testid={testId_SidebarTableItem}
     >
       <button
         type="button"
@@ -124,6 +132,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
             ${styles.sidebar_table_item_btn} 
             ${styles.sidebar_table_item_options}
           `}
+          data-testid={testId_SidebarTableItem_OpenDropdownBtn}
         >
           <span className="bi bi-three-dots" />
         </button>

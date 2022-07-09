@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDomClient from 'react-dom/client';
 
 import App from './App';
-import makeServer from './mock-api/mirageApi';
+import makeServer from './mocks/api/mirageApi';
 
 console.log(process.env.NODE_ENV);
 

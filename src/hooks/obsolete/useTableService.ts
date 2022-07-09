@@ -7,7 +7,7 @@ import { selectTableById } from '../../store/api/apiSlice';
 import { removeManyLists, selectListIdsByTableId } from '../../store/todo/listSlice';
 import {
   createTable, deleteTable, updateTable as editTable,
-} from '../../store/todo/tableSlice';
+} from '../../store/obsolete/tableSlice';
 import { removeManyTodo, selectTodoIdsByTableId } from '../../store/todo/todoSlice';
 import { useAppDispatch, useAppSelector } from '../reduxHooks';
 

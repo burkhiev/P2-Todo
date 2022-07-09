@@ -5,9 +5,11 @@ import useListService from '../../../../hooks/useListService';
 import useTodoValidators from '../../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../../models/ITodoList';
 import { selectTodoListById } from '../../../../store/todo/listSlice';
-import FieldEditor from '../../editors/FieldEditor';
+import FieldEditor from '../../shared/editors/FieldEditor';
 
 const INVALID_LIST_ID_ERROR_MSG = 'Invalid argument error. Non-existent "listId" received.';
+
+export const ListTitleEditor_TestId = 'ListTitleEditor';
 
 interface IListTitleEditorProps {
   listId: TodoListId,
@@ -66,6 +68,7 @@ export default function ListTitleEditor(props: IListTitleEditorProps) {
       onChange={onTitleChange}
       onEntered={onSave}
       takeFocus
+      testId={ListTitleEditor_TestId}
     />
   );
 }

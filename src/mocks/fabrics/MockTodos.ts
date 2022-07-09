@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker';
 import { nanoid } from '@reduxjs/toolkit';
 
 import { ITodo } from '../../models/ITodo';
-import { POSITION_STEP } from '../Consts';
-import { firstToUpperCase } from '../StringFunctions';
+import { POSITION_STEP } from '../../service/Consts';
+import firstToUpperCase from '../../service/StringFunctions';
 
 const mockTodos: Array<ITodo> = [];
 const todosCount = 50;

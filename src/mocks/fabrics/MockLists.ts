@@ -2,8 +2,8 @@ import { nanoid } from '@reduxjs/toolkit';
 import { faker } from '@faker-js/faker';
 
 import { ITodoList } from '../../models/ITodoList';
-import { POSITION_STEP } from '../Consts';
-import { firstToUpperCase } from '../StringFunctions';
+import { POSITION_STEP } from '../../service/Consts';
+import firstToUpperCase from '../../service/StringFunctions';
 
 const mockLists: Array<ITodoList> = [];
 const listsCount = 15;

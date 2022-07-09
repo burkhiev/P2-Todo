@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface ITitleEditorProps {
+interface IFieldEditorProps {
   text: string,
   placeholder?: string,
   mustValidate?: boolean,
@@ -10,10 +10,11 @@ interface ITitleEditorProps {
   takeFocus?: boolean,
   isLoading: boolean,
   onChange: (value: string) => void,
-  onEntered?: () => void
+  onEntered?: () => void,
+  testId: string
 }
 
-export default function FieldEditor(props: ITitleEditorProps) {
+export default function FieldEditor(props: IFieldEditorProps) {
   const {
     text,
     placeholder,
@@ -25,6 +26,7 @@ export default function FieldEditor(props: ITitleEditorProps) {
     onChange: onChangeCallback,
     onEntered: onEnteredCallback = () => { },
     takeFocus = false,
+    testId,
   } = props;
 
   function onChange(e: React.ChangeEvent<any>) {
@@ -59,6 +61,7 @@ export default function FieldEditor(props: ITitleEditorProps) {
         onKeyDown={onEntered}
         onClick={onClick}
         autoFocus={takeFocus}
+        data-testid={testId}
       />
     );
   } else {
@@ -72,12 +75,13 @@ export default function FieldEditor(props: ITitleEditorProps) {
         onKeyDown={onEntered}
         onClick={onClick}
         autoFocus={takeFocus}
+        data-testid={testId}
       />
     );
   }
 
   return (
-    <div className="placeholder-glow">
+    <div className="w-100 placeholder-glow">
       {titleInput}
     </div>
   );

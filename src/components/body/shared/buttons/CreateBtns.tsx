@@ -6,12 +6,19 @@ interface ICreateBtnsProps {
   acceptBtnText?: string,
   isLoading: boolean,
   onAccept: () => void,
-  onClose: () => void
+  onClose: () => void,
+  actionBtnTestId: string,
+  closeBtnTestId: string
 }
 
 export default function CreateBtns(props: ICreateBtnsProps) {
   const {
-    acceptBtnText, isLoading, onAccept, onClose: onCloseAction,
+    isLoading,
+    onAccept,
+    onClose: onCloseAction,
+    acceptBtnText,
+    actionBtnTestId,
+    closeBtnTestId,
   } = props;
 
   function onAction(e: React.MouseEvent<any>) {
@@ -34,6 +41,7 @@ export default function CreateBtns(props: ICreateBtnsProps) {
         type="button"
         className={`${BtnStyles.accept} ${placeholderCss}`}
         onClick={onAction}
+        data-testid={actionBtnTestId}
       >
         {btnText}
       </button>
@@ -41,6 +49,7 @@ export default function CreateBtns(props: ICreateBtnsProps) {
         type="button"
         className={`${BtnStyles.close} ${visible}`}
         onClick={onClose}
+        data-testid={closeBtnTestId}
       >
         <span className={BtnStyles.closeIcon} />
       </button>

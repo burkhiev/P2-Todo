@@ -4,8 +4,13 @@ import { useAppDispatch } from '../../../hooks/reduxHooks';
 import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../models/ITodoList';
 import { addTodo } from '../../../store/todo/todoSlice';
-import CreateBtns from '../buttons/CreateBtns';
-import FieldEditor from '../editors/FieldEditor';
+import CreateBtns from '../shared/buttons/CreateBtns';
+import FieldEditor from '../shared/editors/FieldEditor';
+
+export const CreateTodoForm_TestId = 'CreateTodoForm';
+export const CreateTodoForm_TodoTitle_TestId = 'CreateTodoForm_TodoTitle';
+export const CreateTodoForm_CreateBtn_TestId = 'CreateTodoForm_CreateBtn';
+export const CreateTodoForm_CloseBtn_TestId = 'CreateTodoForm_CloseBtn';
 
 interface ICreateTodoFormProps {
   listId: TodoListId,
@@ -49,6 +54,7 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
           onChange={onTitleChange}
           onEntered={onAddTodo}
           takeFocus
+          testId={CreateTodoForm_TodoTitle_TestId}
         />
       </div>
       <CreateBtns
@@ -56,6 +62,8 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
         isLoading={false}
         onAccept={onAddTodo}
         onClose={onClose}
+        actionBtnTestId={CreateTodoForm_CreateBtn_TestId}
+        closeBtnTestId={CreateTodoForm_CloseBtn_TestId}
       />
     </>
   );

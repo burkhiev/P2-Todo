@@ -6,11 +6,13 @@ import styles from './EditTodoForm.css';
 import { useAppSelector } from '../../../../hooks/reduxHooks';
 import { TodoId } from '../../../../models/ITodo';
 import { removeTodo, selectTodoById, updateTodoText } from '../../../../store/todo/todoSlice';
-import BtnStyles from '../../buttons/BootstrapBtnStyles';
-import FieldEditor from '../../editors/FieldEditor';
+import BtnStyles from '../../shared/buttons/BootstrapBtnStyles';
+import FieldEditor from '../../shared/editors/FieldEditor';
 import useTodoValidators from '../../../../hooks/useTodoValidators';
 
 const NO_EXIST_TODO_ID_ERR_MSG = 'Invalid argument error. Non-existent "todoId" received.';
+
+export const EditTodoForm_TestId = 'EditTodoForm';
 
 interface ITodoCardEditorProps {
   todoId: TodoId,
@@ -100,6 +102,7 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
           onChange={onTitleChange}
           onEntered={onSaveTodo}
           takeFocus
+          testId={EditTodoForm_TestId}
         />
       </div>
       <div className="mb-2">
@@ -109,6 +112,7 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
           isLoading={false}
           onChange={setDescription}
           onEntered={onSaveTodo}
+          testId={EditTodoForm_TestId}
         />
       </div>
       <div className="d-flex">

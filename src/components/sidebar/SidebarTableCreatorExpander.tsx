@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { TodoTableId } from '../../models/ITodoTable';
 
-import OpenCreateFormBtn from '../body/buttons/OpenCreateFormBtn';
-import SidebarCreateTableForm from './SidebarCreateTableForm';
+import OpenCreateFormBtn from '../body/shared/buttons/OpenCreateFormBtn';
+import SidebarCreateTableForm from './SidebarCreateTableForm/SidebarCreateTableForm';
+
+export const testId_SidebarTableCreator_Expander = 'SidebarTableCreator_Expander';
+export const testId_SidebarOpenCreateForm_OpenBtn = 'SidebarOpenCreateForm_OpenBtn';
 
 interface ISidebarTableCreatorExpanderProps {
   onAddTable: (tableId: TodoTableId) => void
@@ -28,7 +31,13 @@ export default function SidebarTableCreatorExpander(props: ISidebarTableCreatorE
   return (
     <>
       {isOpened && <SidebarCreateTableForm onClose={onClose} />}
-      {!isOpened && <OpenCreateFormBtn text="Добавить таблицу" onOpen={onOpen} />}
+      {!isOpened && (
+        <OpenCreateFormBtn
+          text="Добавить таблицу"
+          onOpen={onOpen}
+          testId={testId_SidebarOpenCreateForm_OpenBtn}
+        />
+      )}
     </>
   );
 }

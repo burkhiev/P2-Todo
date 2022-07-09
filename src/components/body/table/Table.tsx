@@ -14,6 +14,8 @@ import { INVALID_TABLE_ID } from '../../../service/Consts';
 import TablePlaceholder from './TablePlaceholder/TablePlaceholder';
 import { selectTableById } from '../../../store/api/apiSlice';
 
+export const testId_Table_Header = 'Table_Header';
+
 // Баг ESLint
 // eslint-disable-next-line no-shadow
 export enum TodoListDropSide {
@@ -151,7 +153,10 @@ export default function Table(props: ITableProps) {
   if (!isLoading && table) {
     content = (
       <div className={`bg-white ${styles.table_container}`}>
-        <div className={styles.table_name}>
+        <div
+          className={styles.table_name}
+          data-testid={testId_Table_Header}
+        >
           {table.name}
         </div>
         <div className={`container m-3 ${styles.table}`}>

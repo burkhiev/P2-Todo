@@ -5,8 +5,10 @@ import { TodoId } from '../../../models/ITodo';
 
 import { TodoListId } from '../../../models/ITodoList';
 import { selectTodoListById } from '../../../store/todo/listSlice';
-import OpenCreateFormBtn from '../buttons/OpenCreateFormBtn';
+import OpenCreateFormBtn from '../shared/buttons/OpenCreateFormBtn';
 import CreateTodoForm from './CreateTodoForm';
+
+export const CreateTodoExpanderTestId = 'CreateTodoExpander';
 
 interface ICreateTodoExpanderProps {
   listId: TodoListId,
@@ -54,7 +56,13 @@ export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
   return (
     <div ref={drop}>
       {isOpened && <CreateTodoForm listId={listId} onClose={onCloseAddForm} />}
-      {!isOpened && <OpenCreateFormBtn text="Добавить карточку" onOpen={onOpenAddForm} />}
+      {!isOpened && (
+        <OpenCreateFormBtn
+          text="Добавить карточку"
+          onOpen={onOpenAddForm}
+          testId={CreateTodoExpanderTestId}
+        />
+      )}
     </div>
   );
 }

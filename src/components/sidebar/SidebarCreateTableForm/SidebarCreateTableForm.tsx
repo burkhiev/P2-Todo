@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 
-import useTodoValidators from '../../hooks/useTodoValidators';
-import { TodoTableId } from '../../models/ITodoTable';
-import { useCreateTable } from '../../store/api/apiSlice';
-import CreateBtns from '../body/buttons/CreateBtns';
-import FieldEditor from '../body/editors/FieldEditor';
+import useTodoValidators from '../../../hooks/useTodoValidators';
+import { TodoTableId } from '../../../models/ITodoTable';
+import { useCreateTable } from '../../../store/api/apiSlice';
+import CreateBtns from '../../body/shared/buttons/CreateBtns';
+import FieldEditor from '../../body/shared/editors/FieldEditor';
+
+export const testId_SidebarCreateTableForm = 'SidebarCreateTableForm';
+export const testId_SidebarCreateTableForm_NameField = 'SidebarCreateTableForm_NameField';
+export const testId_SidebarCreateTableForm_AcceptBtn = 'SidebarCreateTableForm_AcceptBtn';
+export const testId_SidebarCreateTableForm_CloseBtn = 'SidebarCreateTableForm_CloseBtn';
 
 interface ISidebarCreateTableFormProps {
   onClose?: (tableId?: TodoTableId) => void
@@ -39,14 +44,10 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
     }
   }
 
-  let onAdd = onAddTodo;
-
-  if (isLoading) {
-    onAdd = async () => { };
-  }
+  const onAdd = onAddTodo;
 
   return (
-    <div>
+    <div data-testid={testId_SidebarCreateTableForm}>
       <div className="mb-2">
         <FieldEditor
           text={name}
@@ -58,6 +59,7 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
           onChange={onTitleChange}
           onEntered={onAdd}
           takeFocus
+          testId={testId_SidebarCreateTableForm_NameField}
         />
       </div>
       <CreateBtns
@@ -65,6 +67,8 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
         isLoading={isLoading}
         onAccept={onAdd}
         onClose={onClose}
+        actionBtnTestId={testId_SidebarCreateTableForm_AcceptBtn}
+        closeBtnTestId={testId_SidebarCreateTableForm_CloseBtn}
       />
     </div>
   );

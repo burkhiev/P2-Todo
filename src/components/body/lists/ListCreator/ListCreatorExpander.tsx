@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
 import { TodoTableId } from '../../../../models/ITodoTable';
-import OpenCreateFormBtn from '../../buttons/OpenCreateFormBtn';
+import OpenCreateFormBtn from '../../shared/buttons/OpenCreateFormBtn';
 import TableStyles from '../List/bootstrapListStyles';
-import ListCreatorForm from './CreateListForm';
+import CreateListForm from './CreateListForm';
+
+export const ListCreatorExpanderTestId = 'ListCreatorExpander';
 
 interface IListCreatorExpanderProps {
   tableId: TodoTableId
@@ -28,8 +30,14 @@ export default function ListCreatorExpander(props: IListCreatorExpanderProps) {
   return (
     <div>
       <div className={TableStyles.list}>
-        {isOpened && <ListCreatorForm tableId={tableId} onClose={onClose} />}
-        {!isOpened && <OpenCreateFormBtn text="Добавить список" onOpen={onOpen} />}
+        {isOpened && <CreateListForm tableId={tableId} onClose={onClose} />}
+        {!isOpened && (
+          <OpenCreateFormBtn
+            text="Добавить список"
+            onOpen={onOpen}
+            testId={ListCreatorExpanderTestId}
+          />
+        )}
       </div>
     </div>
   );

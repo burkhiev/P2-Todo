@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { INVALID_LIST_ID, INVALID_TABLE_ID } from '../Consts';
+import { INVALID_LIST_ID, INVALID_TABLE_ID } from '../../service/Consts';
 
 import tables from './MockTable';
 import lists from './MockLists';
@@ -25,10 +25,10 @@ for (let i = 0; i < lists.length; i += 1) {
   }
 }
 
-const TodoMocks = {
+const AppMocks = {
   todos,
   lists,
   tables,
 };
 
-export default TodoMocks;
+export default AppMocks;

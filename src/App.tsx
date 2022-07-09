@@ -16,17 +16,17 @@ export default function App() {
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <AppProviders>
-          <StyleController>
-            <Router>
+        <Router>
+          <AppProviders>
+            <StyleController>
               <PageHeader />
               <Routes>
                 <Route index element={<Main />} />
                 <Route path="/index.html" element={<Navigate to="/" />} />
               </Routes>
-            </Router>
-          </StyleController>
-        </AppProviders>
+            </StyleController>
+          </AppProviders>
+        </Router>
       </ErrorBoundary>
     </React.StrictMode>
   );

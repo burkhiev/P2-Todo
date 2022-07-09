@@ -1,6 +1,9 @@
 import {
-  createSlice, createEntityAdapter, nanoid,
+  createSlice,
+  createEntityAdapter,
+  nanoid,
 } from '@reduxjs/toolkit';
+
 import { ITodoTable } from '../../models/ITodoTable';
 
 const tableAdapter = createEntityAdapter<ITodoTable>({
