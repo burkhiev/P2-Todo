@@ -14,6 +14,8 @@ import useTodoDropInfo from '../../../../hooks/dnd/useTodoDropInfo';
 import { selectTodoIdsByListId } from '../../../../store/todo/todoSlice';
 import { selectListById } from '../../../../store/api/listSlice';
 
+export const List_TestId = 'List';
+
 interface IListProps {
   listId: TodoListId,
 }
@@ -130,7 +132,12 @@ export default function List(props: IListProps) {
   });
 
   return (
-    <div ref={todoDrop} className={`${ListStyles.list}`}>
+    <div
+      id={list.id}
+      data-testid={List_TestId}
+      ref={todoDrop}
+      className={`${ListStyles.list}`}
+    >
       <div className="row row-cols-2 g-0 m-0 mb-2">
         <div className="col-9 p-2">
           <ListTitle listId={listId} />

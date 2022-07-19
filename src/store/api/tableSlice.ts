@@ -26,7 +26,7 @@ const tableSlice = apiSlice.injectEndpoints({
 
       transformResponse: (response: { data: ITodoTableResource[] }) => {
         const { data } = response;
-        console.log('[api/table]', response);
+        // console.log('[api/table]', response);
 
         const tables: ITodoTable[] = [];
         data.forEach(({ id, attributes }) =>

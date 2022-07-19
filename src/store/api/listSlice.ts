@@ -1,15 +1,16 @@
 import { createEntityAdapter, createSelector, EntityState } from '@reduxjs/toolkit';
-// import { FetchBaseQueryError, FetchBaseQueryMeta } from '@reduxjs/toolkit/dist/query';
-// import { ResultDescription } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
-import { TodoListDropSide } from '../../components/body/table/Table';
 
 import { ITodoList, TodoListId } from '../../models/ITodoList';
 import { TodoTableId } from '../../models/ITodoTable';
 import ITodoListResource from '../../models/json-api-models/ITodoListResource';
 import InvalidDataError from '../../service/errors/InvalidDataError';
 import { RootState } from '../store';
+import { TodoListDropSide } from '../../components/body/table/Table';
 import apiSlice, {
-  ALL_LISTS_TAG_ID, EMPTY_LIST_TAG_ID, LIST_TAG_ID, LIST_TAG_TYPE,
+  ALL_LISTS_TAG_ID,
+  EMPTY_LIST_TAG_ID,
+  LIST_TAG_ID,
+  LIST_TAG_TYPE,
 } from './apiSlice';
 
 export interface IMoveListPayload {
@@ -30,16 +31,9 @@ export interface IMoveListPayload {
 }
 
 export const EmptyListResultDescription = [{ type: LIST_TAG_TYPE, id: ALL_LISTS_TAG_ID }] as const;
-// ResultDescription<
-//   typeof LIST_TAG_TYPE,
-//   { id: string; },
-//   { id: string; },
-//   FetchBaseQueryError,
-//   FetchBaseQueryMeta | undefined
-// > | undefined = ;
 
 export const listAdapter = createEntityAdapter<ITodoList>({
-  selectId: (table) => table.id,
+  selectId: (list) => list.id,
   sortComparer: (a, b) => a.position - b.position,
 });
 
@@ -52,13 +46,13 @@ const listSlice = apiSlice.injectEndpoints({
 
       transformResponse: (response: { data: ITodoListResource[] }) => {
         const { data } = response;
-        console.log('[api/list]', response);
+        // console.log('[api/list]', response);
 
         const lists: ITodoList[] = [];
 
         data.forEach(({ id, attributes }) => {
           if (!attributes) {
-            throw new InvalidDataError('Some table didn\'t receive any attributes.');
+            throw new InvalidDataError('Some list didn\'t receive any attributes.');
           }
 
           lists.push({ id, ...attributes });
@@ -92,7 +86,7 @@ const listSlice = apiSlice.injectEndpoints({
         };
 
         return {
-          url: 'table',
+          url: 'list',
           method: 'POST',
           body: { data },
         };
@@ -105,10 +99,10 @@ const listSlice = apiSlice.injectEndpoints({
           throw new InvalidDataError('There is not list attributes received.');
         }
 
-        const table: ITodoList = { id, ...attributes };
-        listAdapter.addOne(initialApiState, table);
+        const list: ITodoList = { id, ...attributes };
+        listAdapter.addOne(initialApiState, list);
 
-        return table;
+        return list;
       },
 
       invalidatesTags(_, error) {
@@ -128,7 +122,7 @@ const listSlice = apiSlice.injectEndpoints({
         };
 
         return {
-          url: 'table',
+          url: 'list',
           method: 'PUT',
           body: { data },
         };
@@ -141,10 +135,10 @@ const listSlice = apiSlice.injectEndpoints({
           throw new InvalidDataError('There is not list attributes received.');
         }
 
-        const table: ITodoList = { id, ...attributes };
-        listAdapter.upsertOne(initialApiState, table);
+        const list: ITodoList = { id, ...attributes };
+        listAdapter.upsertOne(initialApiState, list);
 
-        return table;
+        return list;
       },
 
       invalidatesTags(result, error) {

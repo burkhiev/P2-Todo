@@ -20,7 +20,15 @@ export const MIRAGE_URL = 'http://127.0.0.1:5500';
 export const MIRAGE_NAMESPACE = 'api';
 export const MIRAGE_DELAY = 200;
 
+const MAX_TABLE_IDS_COUNT = 50;
+const TABLES_COUNT = 1;
+const LISTS_COUNT = 1;
+
 const tableIds: TodoTableId[] = [];
+
+for (let i = 0; i < MAX_TABLE_IDS_COUNT; i += 1) {
+  tableIds.push(nanoid());
+}
 
 // eslint-disable-next-line no-use-before-define
 function configureTablesEndpoints(server: MockServer) {
@@ -212,10 +220,12 @@ export default function makeServer({ environment = 'development' }) {
 
     factories: {
       table: Factory.extend<ITodoTable>({
-        id() {
-          const tId = nanoid();
-          tableIds.push(tId);
-          return tId;
+        id(i) {
+          if (tableIds.length === 0) {
+            throw new InvalidOperationError('List cannot exist without table.');
+          }
+
+          return tableIds[i];
         },
         name() {
           return firstToUpperCase(faker.science.chemicalElement().name);
@@ -232,7 +242,8 @@ export default function makeServer({ environment = 'development' }) {
           if (tableIds.length === 0) {
             throw new InvalidOperationError('List cannot exist without table.');
           }
-          const index = faker.mersenne.rand(0, tableIds.length);
+
+          const index = faker.mersenne.rand(0, TABLES_COUNT);
           return tableIds[index];
         },
         position(i) {
@@ -242,8 +253,8 @@ export default function makeServer({ environment = 'development' }) {
     },
 
     seeds(server) {
-      server.createList('table', 3);
-      server.createList('list', 20);
+      server.createList('table', TABLES_COUNT);
+      server.createList('list', LISTS_COUNT);
     },
 
     serializers: {

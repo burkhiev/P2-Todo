@@ -25,31 +25,31 @@ export default function CreateListForm(props: IListCreatorFormProps) {
   const [isTitleValid, setIsTitleValid] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
   const [validateTitle] = useTodoValidators();
+  const [createList, { isLoading }] = useCreateList();
 
   const lastListsPosition = useAppSelector((state) =>
     selectLastListsPositionOnTable(state, tableId));
-  const [createList] = useCreateList();
 
   function onTitleChange(value: string) {
     setTitle(value);
     setIsTitleValid(validateTitle(value));
   }
 
-  function onAddList() {
+  async function onAddList() {
     setIsValidated(true);
 
     if (isTitleValid) {
-      createList({
+      await createList({
         tableId,
         title,
         position: lastListsPosition + POSITION_STEP,
-      });
+      }).unwrap();
       onClose();
     }
   }
 
   return (
-    <>
+    <div data-testid={CreateListForm_TestId}>
       <div className="mb-2">
         <FieldEditor
           text={title}
@@ -57,7 +57,7 @@ export default function CreateListForm(props: IListCreatorFormProps) {
           mustValidate
           isValid={isTitleValid}
           isValidated={isValidated}
-          isLoading={false}
+          isLoading={isLoading}
           onChange={onTitleChange}
           onEntered={onAddList}
           takeFocus
@@ -67,13 +67,13 @@ export default function CreateListForm(props: IListCreatorFormProps) {
       <div>
         <CreateBtns
           acceptBtnText="Добавить"
-          isLoading={false}
+          isLoading={isLoading}
           onAccept={onAddList}
           onClose={onClose}
           actionBtnTestId={CreateListForm_CreateBtn_TestId}
           closeBtnTestId={CreateListForm_CloseBtn_TestId}
         />
       </div>
-    </>
+    </div>
   );
 }

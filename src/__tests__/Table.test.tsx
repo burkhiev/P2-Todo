@@ -12,24 +12,24 @@ import {
   testId_SidebarTableItem_DeleteBtn,
   testId_SidebarTableItem_OpenDropdownBtn,
   testId_SidebarTableItem,
-} from '../../components/sidebar/SidebarTableItem/SidebarTableItem';
+} from '../components/sidebar/SidebarTableItem/SidebarTableItem';
 import {
   testId_SidebarCreateTableForm_NameField,
   testId_SidebarCreateTableForm_AcceptBtn,
-} from '../../components/sidebar/SidebarCreateTableForm/SidebarCreateTableForm';
+} from '../components/sidebar/SidebarCreateTableForm/SidebarCreateTableForm';
 import {
   testId_TablePlaceholder_Spinner,
   testId_TablePlaceholder,
-} from '../../components/body/table/TablePlaceholder/TablePlaceholder';
-import { testId_SidebarOpenCreateForm_OpenBtn } from '../../components/sidebar/SidebarTableCreatorExpander';
-import { testId_SidebarTableTitle_Name } from '../../components/sidebar/SidebarTableTitle/SidebarTableTitle';
-import { testId_SidebarEditTableTitleForm_Field } from '../../components/sidebar/SidebarTableTitle/SidebarEditTableTitleForm';
-import { testId_SidebarList } from '../../components/sidebar/Sidebar/Sidebar';
-import { testId_Table_Header } from '../../components/body/table/Table';
+} from '../components/body/table/TablePlaceholder/TablePlaceholder';
+import { testId_SidebarOpenCreateForm_OpenBtn } from '../components/sidebar/SidebarTableCreatorExpander';
+import { testId_SidebarTableTitle_Name } from '../components/sidebar/SidebarTableTitle/SidebarTableTitle';
+import { testId_SidebarEditTableTitleForm_Field } from '../components/sidebar/SidebarTableTitle/SidebarEditTableTitleForm';
+import { testId_SidebarList } from '../components/sidebar/Sidebar/Sidebar';
+import { testId_Table_Header } from '../components/body/table/Table';
 
-import createServer from '../../mocks/api/mirageApi';
-import renderWithProviders from '../../utils/test-utils';
-import Main from '../../components/body/Main';
+import createServer from '../mocks/api/mirageApi';
+import renderWithProviders from '../utils/test-utils';
+import Main from '../components/body/Main';
 
 let server: ReturnType<typeof createServer>;
 let app: RenderResult;
@@ -63,15 +63,14 @@ describe('table crud testing', () => {
 
   it('shows tables list when get a few tables from server', async () => {
     const tables = server.createList('table', 4);
-    await renderTestApp();
 
-    const {
-      findAllByTestId, getByTestId, findByTestId,
-    } = app;
+    await renderTestApp();
+    const { findByTestId, findAllByTestId, getByTestId } = app;
 
     await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
     await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
 
+    await findAllByTestId(testId_SidebarTableItem);
     expect(await findAllByTestId(testId_SidebarTableItem)).toHaveLength(4);
 
     const tableListElem = getByTestId(testId_SidebarList);

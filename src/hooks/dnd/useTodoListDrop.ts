@@ -25,7 +25,8 @@ function calculateNewListPosition(
   }
 
   if (draggedList.id === targetList.id) {
-    throw new InvalidArgumentError('"draggedList" and "targetList" are equals.');
+    // throw new InvalidArgumentError('"draggedList" and "targetList" are equals.');
+    return [];
   }
 
   const lists = listsFromState.sort((a, b) => (a.position) - (b.position));
@@ -180,6 +181,10 @@ export default function useTodoListDrop(
           lists,
           dropInfo.dropSide,
         );
+
+        if (!listResources.length) {
+          return;
+        }
 
         try {
           await moveList({ data: listResources }).unwrap();

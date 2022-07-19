@@ -5,12 +5,10 @@ import useTodoValidators from '../../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../../models/ITodoList';
 import { selectListById, useUpdateList } from '../../../../store/api/listSlice';
 import FieldEditor from '../../shared/editors/FieldEditor';
-// import useListService from '../../../../hooks/useListService';
-// import { selectTodoListById } from '../../../../store/obsolete/listSlice';
-
-const INVALID_LIST_ID_ERROR_MSG = 'Invalid argument error. Non-existent "listId" received.';
 
 export const ListTitleEditor_TestId = 'ListTitleEditor';
+
+const INVALID_LIST_ID_ERROR_MSG = 'Invalid argument error. Non-existent "listId" received.';
 
 interface IListTitleEditorProps {
   listId: TodoListId,
@@ -46,16 +44,15 @@ export default function ListTitleEditor(props: IListTitleEditorProps) {
     setIsValidated(false);
   }
 
-  // const { updateList } = useListService(listId);
-  const [updateList] = useUpdateList();
+  const [updateList, { isLoading }] = useUpdateList();
 
-  function onSave() {
+  async function onSave() {
     if (!list) {
       throw new Error(INVALID_LIST_ID_ERROR_MSG);
     }
 
     if (isTitleValid) {
-      updateList({ ...list, title });
+      await updateList({ ...list, title }).unwrap();
       resetStates();
       onSaveAction();
     }
@@ -64,17 +61,20 @@ export default function ListTitleEditor(props: IListTitleEditorProps) {
   }
 
   return (
-    <FieldEditor
-      text={title}
-      placeholder="Имя списка"
-      mustValidate
-      isValid={isTitleValid}
-      isValidated={isValidated}
-      isLoading={false}
-      onChange={onTitleChange}
-      onEntered={onSave}
-      takeFocus
-      testId={ListTitleEditor_TestId}
-    />
+    // <div data-testid={ListTitleEditor_TestId}>
+    <div>
+      <FieldEditor
+        text={title}
+        placeholder="Имя списка"
+        mustValidate
+        isValid={isTitleValid}
+        isValidated={isValidated}
+        isLoading={isLoading}
+        onChange={onTitleChange}
+        onEntered={onSave}
+        takeFocus
+        testId={ListTitleEditor_TestId}
+      />
+    </div>
   );
 }

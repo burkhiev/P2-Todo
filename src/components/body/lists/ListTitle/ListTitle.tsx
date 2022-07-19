@@ -5,6 +5,9 @@ import { TodoListId } from '../../../../models/ITodoList';
 import { selectListById } from '../../../../store/api/listSlice';
 import ListTitleEditor from './ListTitleEditor';
 
+export const ListTitle_TestId = 'ListTitle';
+export const ListTitleOpenEditorBtn_TestId = 'ListTitleOpenEditorBtn';
+
 interface IListTitleProps {
   listId: TodoListId
 }
@@ -37,6 +40,7 @@ export default function ListTitle(props: IListTitleProps) {
   } else {
     content = (
       <button
+        data-testid={ListTitleOpenEditorBtn_TestId}
         type="button"
         className="btn text-start"
         onClick={onOpen}
@@ -46,5 +50,9 @@ export default function ListTitle(props: IListTitleProps) {
     );
   }
 
-  return content;
+  return (
+    <div data-testid={ListTitle_TestId}>
+      {content}
+    </div>
+  );
 }

@@ -8,7 +8,8 @@ import { selectListById } from '../../../store/api/listSlice';
 import OpenCreateFormBtn from '../shared/buttons/OpenCreateFormBtn';
 import CreateTodoForm from './CreateTodoForm';
 
-export const CreateTodoExpanderTestId = 'CreateTodoExpander';
+export const CreateTodoExpander_TestId = 'CreateTodoExpander';
+export const CreateTodoExpanderOpenBtn_TestId = 'CreateTodoExpanderOpenBtn';
 
 interface ICreateTodoExpanderProps {
   listId: TodoListId,
@@ -54,13 +55,16 @@ export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
   }, [todoIsOver]);
 
   return (
-    <div ref={drop}>
+    <div
+      data-testid={CreateTodoExpander_TestId}
+      ref={drop}
+    >
       {isOpened && <CreateTodoForm listId={listId} onClose={onCloseAddForm} />}
       {!isOpened && (
         <OpenCreateFormBtn
           text="Добавить карточку"
           onOpen={onOpenAddForm}
-          testId={CreateTodoExpanderTestId}
+          testId={CreateTodoExpanderOpenBtn_TestId}
         />
       )}
     </div>

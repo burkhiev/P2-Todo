@@ -5,7 +5,7 @@ import OpenCreateFormBtn from '../../shared/buttons/OpenCreateFormBtn';
 import TableStyles from '../List/bootstrapListStyles';
 import CreateListForm from './CreateListForm';
 
-export const ListCreatorExpanderTestId = 'ListCreatorExpander';
+export const ListCreatorExpander_TestId = 'ListCreatorExpander';
 
 interface IListCreatorExpanderProps {
   tableId: TodoTableId
@@ -35,7 +35,7 @@ export default function ListCreatorExpander(props: IListCreatorExpanderProps) {
           <OpenCreateFormBtn
             text="Добавить список"
             onOpen={onOpen}
-            testId={ListCreatorExpanderTestId}
+            testId={ListCreatorExpander_TestId}
           />
         )}
       </div>

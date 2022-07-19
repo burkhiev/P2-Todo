@@ -47,7 +47,7 @@ export default function Table(props: ITableProps) {
 
   const {
     isLoading: isListsLoading,
-    isSuccess: isListsLoaded,
+    isSuccess: isListsSuccess,
   } = useGetLists(undefined);
 
   const [placeholderIndex, setPlaceholderIndex] = useState(-1);
@@ -117,7 +117,7 @@ export default function Table(props: ITableProps) {
 
   let listContent: JSX.Element[] = [];
 
-  if (isListsLoaded) {
+  if (!isListsLoading && isListsSuccess) {
     listContent = lists.map((list, index) => {
       let content;
 
