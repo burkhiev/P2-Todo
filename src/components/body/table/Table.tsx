@@ -6,13 +6,13 @@ import { TodoTableId } from '../../../models/ITodoTable';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import ListCreatorExpander from '../lists/ListCreator/ListCreatorExpander';
 import ListDragDropWrap from '../lists/ListDragDropWrap';
-import { selectListsByTableId } from '../../../store/todo/listSlice';
 import ListPlaceholder from '../lists/ListPlaceholder/ListPlaceholder';
-import { TodoListId } from '../../../models/ITodoList';
+import { ITodoList, TodoListId } from '../../../models/ITodoList';
 import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
 import TablePlaceholder from './TablePlaceholder/TablePlaceholder';
-import { selectTableById } from '../../../store/api/apiSlice';
+import { selectTableById } from '../../../store/api/tableSlice';
+import { selectListsByTableId, useGetLists } from '../../../store/api/listSlice';
 
 export const testId_Table_Header = 'Table_Header';
 
@@ -30,7 +30,7 @@ export interface IOnDropArg {
 }
 
 export interface IOnDropReturnType {
-  listId: TodoListId,
+  list: ITodoList,
   dropSide: TodoListDropSide
 }
 
@@ -43,7 +43,12 @@ export default function Table(props: ITableProps) {
   const { tableId, isLoading } = props;
 
   const table = useAppSelector((state) => selectTableById(state, tableId ?? INVALID_TABLE_ID));
-  const lists = useAppSelector((state) => selectListsByTableId(state, tableId ?? INVALID_TABLE_ID));
+  const lists = useAppSelector((state) => selectListsByTableId(state, table?.id));
+
+  const {
+    isLoading: isListsLoading,
+    isSuccess: isListsLoaded,
+  } = useGetLists(undefined);
 
   const [placeholderIndex, setPlaceholderIndex] = useState(-1);
   const [placeholderDropSide, setPlaceholderDropSide] = useState(TodoListDropSide.AFTER);
@@ -89,10 +94,13 @@ export default function Table(props: ITableProps) {
 
     setDefaultStates();
 
-    return {
-      listId,
-      dropSide: phDropSide,
-    };
+    const list = lists.find((l) => l.id === listId);
+
+    if (!list) {
+      return undefined;
+    }
+
+    return { list, dropSide: phDropSide };
   }
 
   function onDropOver(index: number) {
@@ -107,50 +115,54 @@ export default function Table(props: ITableProps) {
     setPlaceholderIndex(index);
   }
 
-  const listContent = lists.map((list, index) => {
-    let content;
+  let listContent: JSX.Element[] = [];
 
-    if (fadedListIndex !== index) {
-      content = (
-        <ListDragDropWrap
-          listId={list.id}
-          key={list.id}
-          onDragging={() => onDragging(index)}
-          onDropOver={() => onDropOver(index)}
-        />
+  if (isListsLoaded) {
+    listContent = lists.map((list, index) => {
+      let content;
+
+      if (fadedListIndex !== index) {
+        content = (
+          <ListDragDropWrap
+            listId={list.id}
+            key={list.id}
+            onDragging={() => onDragging(index)}
+            onDropOver={() => onDropOver(index)}
+          />
+        );
+      }
+
+      let beforeContent;
+      let afterContent;
+
+      if (index === placeholderIndex) {
+        const placeholder = (
+          <ListPlaceholder
+            key="PLACEHOLDER"
+            listId={list.id}
+            placeholderDropSide={placeholderDropSide}
+            placeholderIndex={placeholderIndex}
+            onDrop={onDrop}
+          />
+        );
+
+        beforeContent = placeholderDropSide === TodoListDropSide.BEFORE ? placeholder : '';
+        afterContent = placeholderDropSide === TodoListDropSide.AFTER ? placeholder : '';
+      }
+
+      return (
+        <React.Fragment key={list.id}>
+          {beforeContent}
+          {content}
+          {afterContent}
+        </React.Fragment>
       );
-    }
-
-    let beforeContent;
-    let afterContent;
-
-    if (index === placeholderIndex) {
-      const placeholder = (
-        <ListPlaceholder
-          key="PLACEHOLDER"
-          listId={list.id}
-          placeholderDropSide={placeholderDropSide}
-          placeholderIndex={placeholderIndex}
-          onDrop={onDrop}
-        />
-      );
-
-      beforeContent = placeholderDropSide === TodoListDropSide.BEFORE ? placeholder : '';
-      afterContent = placeholderDropSide === TodoListDropSide.AFTER ? placeholder : '';
-    }
-
-    return (
-      <React.Fragment key={list.id}>
-        {beforeContent}
-        {content}
-        {afterContent}
-      </React.Fragment>
-    );
-  });
+    });
+  }
 
   let content: any;
 
-  if (!isLoading && table) {
+  if (!isLoading && !isListsLoading && table) {
     content = (
       <div className={`bg-white ${styles.table_container}`}>
         <div

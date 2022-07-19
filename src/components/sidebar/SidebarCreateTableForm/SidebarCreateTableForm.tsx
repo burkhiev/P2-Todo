@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../models/ITodoTable';
-import { useCreateTable } from '../../../store/api/apiSlice';
+import { useCreateTable } from '../../../store/api/tableSlice';
 import CreateBtns from '../../body/shared/buttons/CreateBtns';
 import FieldEditor from '../../body/shared/editors/FieldEditor';
 

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
 import { useAppSelector } from '../../../../hooks/reduxHooks';
-import useListService from '../../../../hooks/useListService';
 import useTodoValidators from '../../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../../models/ITodoList';
-import { selectTodoListById } from '../../../../store/todo/listSlice';
+import { selectListById, useUpdateList } from '../../../../store/api/listSlice';
 import FieldEditor from '../../shared/editors/FieldEditor';
+// import useListService from '../../../../hooks/useListService';
+// import { selectTodoListById } from '../../../../store/obsolete/listSlice';
 
 const INVALID_LIST_ID_ERROR_MSG = 'Invalid argument error. Non-existent "listId" received.';
 
@@ -19,7 +20,7 @@ interface IListTitleEditorProps {
 export default function ListTitleEditor(props: IListTitleEditorProps) {
   const { listId, onSave: onSaveAction } = props;
 
-  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  const list = useAppSelector((state) => selectListById(state, listId));
   if (!list) {
     throw new Error(INVALID_LIST_ID_ERROR_MSG);
   }
@@ -45,11 +46,16 @@ export default function ListTitleEditor(props: IListTitleEditorProps) {
     setIsValidated(false);
   }
 
-  const { updateList } = useListService(listId);
+  // const { updateList } = useListService(listId);
+  const [updateList] = useUpdateList();
 
   function onSave() {
+    if (!list) {
+      throw new Error(INVALID_LIST_ID_ERROR_MSG);
+    }
+
     if (isTitleValid) {
-      updateList(title);
+      updateList({ ...list, title });
       resetStates();
       onSaveAction();
     }

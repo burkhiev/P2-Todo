@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { useAppDispatch } from '../../../../hooks/reduxHooks';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
 import useTodoValidators from '../../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../../models/ITodoTable';
-import { addList } from '../../../../store/todo/listSlice';
+import { POSITION_STEP } from '../../../../service/Consts';
+import { selectLastListsPositionOnTable, useCreateList } from '../../../../store/api/listSlice';
 import CreateBtns from '../../shared/buttons/CreateBtns';
 import FieldEditor from '../../shared/editors/FieldEditor';
 
@@ -20,12 +21,14 @@ interface IListCreatorFormProps {
 export default function CreateListForm(props: IListCreatorFormProps) {
   const { tableId, onClose = () => {} } = props;
 
-  const dispatch = useAppDispatch();
-
   const [title, setTitle] = useState('');
   const [isTitleValid, setIsTitleValid] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
   const [validateTitle] = useTodoValidators();
+
+  const lastListsPosition = useAppSelector((state) =>
+    selectLastListsPositionOnTable(state, tableId));
+  const [createList] = useCreateList();
 
   function onTitleChange(value: string) {
     setTitle(value);
@@ -36,7 +39,11 @@ export default function CreateListForm(props: IListCreatorFormProps) {
     setIsValidated(true);
 
     if (isTitleValid) {
-      dispatch(addList(tableId, title));
+      createList({
+        tableId,
+        title,
+        position: lastListsPosition + POSITION_STEP,
+      });
       onClose();
     }
   }

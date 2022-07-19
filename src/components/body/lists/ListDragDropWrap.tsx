@@ -6,7 +6,7 @@ import useTodoListDrag from '../../../hooks/dnd/useTodoListDrag';
 import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoListId } from '../../../models/ITodoList';
-import { selectTodoListById } from '../../../store/todo/listSlice';
+import { selectListById } from '../../../store/api/listSlice';
 import List from './List/List';
 
 interface IListProps {
@@ -18,7 +18,7 @@ interface IListProps {
 export default function ListDragDropWrap(props: IListProps) {
   const { listId, onDropOver, onDragging } = props;
 
-  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  const list = useAppSelector((state) => selectListById(state, listId));
   if (!list) {
     throw new Error('ListDragDropWrap component must have a valid "listId".');
   }

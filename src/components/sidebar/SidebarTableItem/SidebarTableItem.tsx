@@ -4,7 +4,7 @@ import styles from './SidebarTableItem.css';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoTableId } from '../../../models/ITodoTable';
-import { selectTableById, useDeleteTable } from '../../../store/api/apiSlice';
+import { selectTableById, useDeleteTable } from '../../../store/api/tableSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
 export const testId_SidebarTableItem = 'SidebarTableItemTestId';

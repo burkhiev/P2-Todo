@@ -7,7 +7,7 @@ import { TodoTableId } from '../../../models/ITodoTable';
 import SidebarTableItem from '../SidebarTableItem/SidebarTableItem';
 import SidebarTableTitle from '../SidebarTableTitle/SidebarTableTitle';
 import SidebarTableCreatorExpander from '../SidebarTableCreatorExpander';
-import { selectAllTablesIds } from '../../../store/api/apiSlice';
+import { selectAllTablesIds } from '../../../store/api/tableSlice';
 
 export const testId_SidebarList = 'SidebarList';
 

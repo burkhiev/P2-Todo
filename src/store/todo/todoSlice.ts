@@ -17,7 +17,7 @@ import { ITodo, TodoId } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
 import { IAddTodoDto } from '../../models/IAddTodoDto';
 import MathService from '../../service/MathService';
-import { TodoTableId } from '../../models/ITodoTable';
+// import { TodoTableId } from '../../models/ITodoTable';
 
 const INVALID_TODO_ID_ERR_MSG = 'Invalid argument error. Non-existent "todoId" received.';
 const MUST_HAVE_INSERT_INDEX_ERR_MSG = 'Invalid operation error. '
@@ -228,14 +228,14 @@ export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
   selectTodosByListId(state, listId)
     .map((todo) => todo.id);
 
-export const selectTodoIdsByTableId = (state: RootState, tableId: TodoTableId) => {
-  const allLists = Object.values(state.todo.lists.entities);
+// export const selectTodoIdsByTableId = (state: RootState, tableId: TodoTableId) => {
+//   const allLists = Object.values(state.todo.lists.entities);
 
-  const lists = allLists.filter((list) => list?.tableId === tableId);
-  const listsTodos = lists.map((list) => selectTodoIdsByListId(state, list!.id));
+//   const lists = allLists.filter((list) => list?.tableId === tableId);
+//   const listsTodos = lists.map((list) => selectTodoIdsByListId(state, list!.id));
 
-  const todos: TodoId[] = [];
-  listsTodos.forEach((lt) => lt.forEach((todoId) => todos.push(todoId)));
+//   const todos: TodoId[] = [];
+//   listsTodos.forEach((lt) => lt.forEach((todoId) => todos.push(todoId)));
 
-  return todos;
-};
+//   return todos;
+// };

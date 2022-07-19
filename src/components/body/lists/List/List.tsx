@@ -11,8 +11,8 @@ import ListTitle from '../ListTitle/ListTitle';
 import TodoCardPlaceholder from '../../todos/TodoCardPlaceholder';
 import { TodoId } from '../../../../models/ITodo';
 import useTodoDropInfo from '../../../../hooks/dnd/useTodoDropInfo';
-import { selectTodoListById } from '../../../../store/todo/listSlice';
 import { selectTodoIdsByListId } from '../../../../store/todo/todoSlice';
+import { selectListById } from '../../../../store/api/listSlice';
 
 interface IListProps {
   listId: TodoListId,
@@ -21,7 +21,7 @@ interface IListProps {
 export default function List(props: IListProps) {
   const { listId } = props;
 
-  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  const list = useAppSelector((state) => selectListById(state, listId));
   if (!list) {
     throw new Error('List component must have a valid list id.');
   }

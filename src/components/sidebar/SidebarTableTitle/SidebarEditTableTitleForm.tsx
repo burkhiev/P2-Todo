@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../models/ITodoTable';
-import { selectTableById, useUpdateTable } from '../../../store/api/apiSlice';
+import { selectTableById, useUpdateTable } from '../../../store/api/tableSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 import FieldEditor from '../../body/shared/editors/FieldEditor';
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { useAppSelector } from '../../../../hooks/reduxHooks';
 import { TodoListId } from '../../../../models/ITodoList';
-import { selectTodoListById } from '../../../../store/todo/listSlice';
+import { selectListById } from '../../../../store/api/listSlice';
 import ListTitleEditor from './ListTitleEditor';
 
 interface IListTitleProps {
@@ -12,7 +12,7 @@ interface IListTitleProps {
 export default function ListTitle(props: IListTitleProps) {
   const { listId } = props;
 
-  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  const list = useAppSelector((state) => selectListById(state, listId));
   if (!list) {
     throw new Error('ListTitle component must have a valid listId prop.');
   }

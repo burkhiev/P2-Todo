@@ -4,7 +4,7 @@ import styles from './SidebarTableTitle.css';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoTableId } from '../../../models/ITodoTable';
-import { selectTableById } from '../../../store/api/apiSlice';
+import { selectTableById } from '../../../store/api/tableSlice';
 import SidebarEditTableTitleForm from './SidebarEditTableTitleForm';
 
 export const testId_SidebarTableTitle = 'SidebarTableTitle';

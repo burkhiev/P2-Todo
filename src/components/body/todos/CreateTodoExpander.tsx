@@ -4,7 +4,7 @@ import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoId } from '../../../models/ITodo';
 
 import { TodoListId } from '../../../models/ITodoList';
-import { selectTodoListById } from '../../../store/todo/listSlice';
+import { selectListById } from '../../../store/api/listSlice';
 import OpenCreateFormBtn from '../shared/buttons/OpenCreateFormBtn';
 import CreateTodoForm from './CreateTodoForm';
 
@@ -18,7 +18,7 @@ interface ICreateTodoExpanderProps {
 export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
   const { listId, setPlaceholder } = props;
 
-  const list = useAppSelector((state) => selectTodoListById(state, listId));
+  const list = useAppSelector((state) => selectListById(state, listId));
   if (!list) {
     throw new Error('Invalid listId prop.');
   }

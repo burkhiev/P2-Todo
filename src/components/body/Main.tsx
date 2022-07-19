@@ -4,7 +4,7 @@ import styles from './Main.css';
 
 import Table from './table/Table';
 import Sidebar from '../sidebar/Sidebar/Sidebar';
-import { selectAllTables, useGetTables } from '../../store/api/apiSlice';
+import { selectAllTables, useGetTables } from '../../store/api/tableSlice';
 import { TodoTableId } from '../../models/ITodoTable';
 import { useAppSelector } from '../../hooks/reduxHooks';
 import { INVALID_TABLE_ID } from '../../service/Consts';

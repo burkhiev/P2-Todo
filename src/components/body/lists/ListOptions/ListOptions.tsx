@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import styles from './ListOptions.css';
 
 import { TodoListId } from '../../../../models/ITodoList';
-import useListService from '../../../../hooks/useListService';
+import { useDeleteList } from '../../../../store/api/listSlice';
 
 interface IListOptionsProps {
   listId: TodoListId
@@ -12,7 +12,11 @@ interface IListOptionsProps {
 export default function ListOptions(props: IListOptionsProps) {
   const { listId } = props;
 
-  const { removeList } = useListService(listId);
+  const [deleteList] = useDeleteList();
+  const onDeleteList = useCallback(
+    () => deleteList({ id: listId }),
+    [listId, deleteList],
+  );
 
   function onOpenOptions(e: React.MouseEvent) {
     e.stopPropagation();
@@ -34,7 +38,7 @@ export default function ListOptions(props: IListOptionsProps) {
           <button
             type="button"
             className="dropdown-item"
-            onClick={removeList}
+            onClick={onDeleteList}
           >
             Удалить
           </button>
