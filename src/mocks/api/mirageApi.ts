@@ -11,23 +11,35 @@ import { ITodoTable, TodoTableId } from '../../models/ITodoTable';
 import firstToUpperCase from '../../service/StringFunctions';
 import ITodoTableResource from '../../models/json-api-models/ITodoTableResource';
 import InvalidDataError from '../../service/errors/InvalidDataError';
-import { ITodoList } from '../../models/ITodoList';
+import { ITodoList, TodoListId } from '../../models/ITodoList';
 import InvalidOperationError from '../../service/errors/InvalidOperationError';
 import ITodoListResource from '../../models/json-api-models/ITodoListResource';
-import { POSITION_STEP } from '../../service/Consts';
+import { MAX_POSITION_FRACTION_DIGITS_NUMBER, POSITION_STEP } from '../../service/Consts';
+import { ITodo } from '../../models/ITodo';
+import ITodoResource from '../../models/json-api-models/ITodoResource';
+import IMoveTodoResource from '../../models/json-api-models/IMoveTodoResource';
+import MathService from '../../service/MathService';
+import { IMoveTodoPayload } from '../../store/api/todoSlice';
+import { getNewTodoPosition } from '../../store/api/apiHelpers';
 
 export const MIRAGE_URL = 'http://127.0.0.1:5500';
 export const MIRAGE_NAMESPACE = 'api';
 export const MIRAGE_DELAY = 200;
 
 const MAX_TABLE_IDS_COUNT = 50;
-const TABLES_COUNT = 1;
-const LISTS_COUNT = 1;
-
+const MAX_LIST_IDS_COUNT = 100;
+const TABLES_COUNT = 3;
+const LISTS_COUNT = 10;
+const TODOS_COUNT = 15;
 const tableIds: TodoTableId[] = [];
+const listIds: TodoListId[] = [];
 
 for (let i = 0; i < MAX_TABLE_IDS_COUNT; i += 1) {
   tableIds.push(nanoid());
+}
+
+for (let i = 0; i < MAX_LIST_IDS_COUNT; i += 1) {
+  listIds.push(nanoid());
 }
 
 // eslint-disable-next-line no-use-before-define
@@ -85,7 +97,7 @@ function configureTablesEndpoints(server: MockServer) {
     const { data }: { data: ITodoTableResource } = JSON.parse(request.requestBody);
     const { id } = data;
 
-    const table = schema.find('table', data.id);
+    const table = schema.find('table', id);
     table?.destroy();
 
     return { data: { id } };
@@ -163,7 +175,7 @@ function configureListsEndpoints(server: MockServer) {
       }
 
       const invalidTableId = !attributes?.tableId
-        || tableIds.every((tableId) => tableId !== attributes.tableId);
+        || !tableIds.some((tableId) => tableId === attributes.tableId);
       if (invalidTableId) {
         throw new InvalidDataError('[list.put] - Invalid table id is received.');
       }
@@ -206,9 +218,202 @@ function configureListsEndpoints(server: MockServer) {
   });
 }
 
+// eslint-disable-next-line no-use-before-define
+function configureTodosEndpoints(server: MockServer) {
+  server.get('todo');
+
+  server.get('todo/:listid', (schema, request) => {
+    const listId = request.params.listid as TodoListId;
+
+    const todos = schema.all<'todo'>('todo').filter((todo) => todo.listId === listId);
+
+    return todos;
+  });
+
+  server.post('todo', (schema, request) => {
+    const { data }: { data: ITodoResource } = JSON.parse(request.requestBody);
+    const { attributes } = data;
+
+    if (!attributes) {
+      throw new InvalidDataError('[post/todo]: There are no attributes.');
+    }
+
+    if (!attributes.title) {
+      throw new InvalidDataError('[post/todo]: Invalid todo title received.');
+    }
+
+    if (!attributes.listId) {
+      throw new InvalidDataError('[post/todo]: Invalid todo listId received.');
+    }
+
+    const todos = schema.all('todo').filter((t) => t.listId === attributes.listId).models;
+    const lastPosition = todos.reduce((prev, t) => Math.max(prev, t.position), 0);
+
+    const newTodo: ITodo = {
+      ...attributes,
+      id: nanoid(),
+      addedAt: (new Date()).toISOString(),
+      position: lastPosition + POSITION_STEP,
+    };
+
+    const entity = schema.create('todo', newTodo);
+    return entity;
+  });
+
+  server.put('todo', (schema, request) => {
+    const { data }: { data: ITodoResource } = JSON.parse(request.requestBody);
+    const { id, attributes: attrs } = data;
+
+    const entity = schema.find('todo', id);
+
+    if (!entity) {
+      throw new InvalidDataError('[put/todo]: There are no todo for received id.');
+    }
+
+    if (!attrs) {
+      throw new InvalidDataError('[put/todo]: There are no attributes for todo.');
+    }
+
+    if (!attrs.listId || !listIds.some((listId) => listId === attrs.listId)) {
+      throw new InvalidDataError('[put/todo]: Invalid todo listId received.');
+    }
+
+    if (!attrs.position) {
+      throw new InvalidDataError('[put/todo]: Invalid todo position received.');
+    }
+
+    if (!attrs.title) {
+      throw new InvalidDataError('[put/todo]: Invalid todo title received.');
+    }
+
+    entity.update('title', attrs.title);
+    entity.update('description', attrs.description);
+    entity.update('listId', attrs.listId);
+    entity.update('position', attrs.position);
+    entity.save();
+
+    return entity;
+  });
+
+  server.patch('move-todo', (schema, request) => {
+    const { data }: { data: IMoveTodoResource } = JSON.parse(request.requestBody);
+    const { id, attributes: attrs } = data;
+
+    const todo = schema.find('todo', id);
+
+    if (!todo) {
+      throw new InvalidDataError('[patch/move-todo]: There are no todo for received id.');
+    }
+
+    if (!attrs) {
+      throw new InvalidDataError('[patch/move-todo]: There are no attributes for todo.');
+    }
+
+    const lists = schema.all('list').models;
+    const {
+      destIndex, destListId, srcIndex, srcListId,
+    } = attrs;
+
+    if (!lists.some((l) => l.id === destListId)) {
+      throw new InvalidDataError('[patch/move-todo]: Invalid destinationListId received.');
+    }
+
+    const todos = schema.all('todo').models;
+
+    if (destIndex < 0 || todos.length < destIndex) {
+      throw new InvalidDataError('[patch/move-todo]: Invalid destinationIndex received.');
+    }
+
+    const moveInfos: IMoveTodoPayload = {
+      todoId: data.id,
+      ...data.attributes,
+    };
+
+    const newPos = getNewTodoPosition(todos, moveInfos);
+
+    if (!newPos) {
+      return { data: [] };
+    }
+
+    let result: ITodoResource[] = [];
+
+    if (MathService.countOfFractionalPartNumbers(newPos) <= MAX_POSITION_FRACTION_DIGITS_NUMBER) {
+      todo.listId = destListId;
+      todo.position = newPos;
+      todo.save();
+
+      const { id: todoId, ...attributes } = todo.attrs;
+      const resource: ITodoResource = {
+        id: todoId,
+        type: 'todo',
+        attributes,
+      };
+
+      result = [resource];
+    } else {
+      const destTodos = todos
+        .filter((t) => t.listId === destListId)
+        .sort((a, b) => a.position - b.position);
+
+      if (srcListId === destListId) {
+        destTodos.splice(srcIndex, 1);
+
+        if (srcIndex < destIndex) {
+          if (destIndex === destTodos.length) {
+            destTodos.push(todo);
+          } else {
+            destTodos.splice(destIndex, 0, todo);
+          }
+        }
+      } else {
+        destTodos.splice(destIndex, 0, todo);
+      }
+
+      for (let i = 0; i < todos.length; i += 1) {
+        const t = todos[i];
+
+        t.listId = destListId;
+        t.position = (i + 1) * POSITION_STEP;
+        t.save();
+
+        const { id: todoId, ...attributes } = t.attrs;
+        const resource: ITodoResource = {
+          id: todoId,
+          type: 'todo',
+          attributes,
+        };
+
+        result.push(resource);
+      }
+    }
+
+    // console.log('[patch/move-todo]: result =', result);
+
+    return { data: result };
+  });
+
+  server.delete('todo', (schema, requestInfo) => {
+    const request: { data: ITodoResource } = JSON.parse(requestInfo.requestBody);
+    const { data: { id } } = request;
+
+    const entity = schema.find('todo', id);
+    if (!entity) {
+      throw new InvalidDataError('[todo/delete]: Invalid todo id received.');
+    }
+
+    entity.destroy();
+
+    const data: ITodoResource = {
+      id: entity.id,
+      type: 'todo',
+    };
+
+    return { data };
+  });
+}
+
 export default function makeServer({ environment = 'development' }) {
   // eslint-disable-next-line no-console
-  // console.info('creating mirage server...');
 
   return createServer({
     environment,
@@ -216,6 +421,7 @@ export default function makeServer({ environment = 'development' }) {
     models: {
       table: Model.extend<Partial<ITodoTable>>({}),
       list: Model.extend<Partial<ITodoList>>({}),
+      todo: Model.extend<Partial<ITodo>>({}),
     },
 
     factories: {
@@ -224,20 +430,19 @@ export default function makeServer({ environment = 'development' }) {
           if (tableIds.length === 0) {
             throw new InvalidOperationError('List cannot exist without table.');
           }
-
           return tableIds[i];
         },
-        name() {
-          return firstToUpperCase(faker.science.chemicalElement().name);
-        },
+        name: () => firstToUpperCase(faker.science.chemicalElement().name),
       }),
+
       list: Factory.extend<ITodoList>({
-        id() {
-          return nanoid();
+        id: (i) => {
+          if (tableIds.length === 0) {
+            throw new InvalidOperationError('List cannot exist without table.');
+          }
+          return listIds[i];
         },
-        title() {
-          return firstToUpperCase(faker.company.companyName());
-        },
+        title: () => firstToUpperCase(faker.company.companyName()),
         tableId() {
           if (tableIds.length === 0) {
             throw new InvalidOperationError('List cannot exist without table.');
@@ -246,8 +451,22 @@ export default function makeServer({ environment = 'development' }) {
           const index = faker.mersenne.rand(0, TABLES_COUNT);
           return tableIds[index];
         },
-        position(i) {
-          return i * POSITION_STEP;
+        position: (i) => i * POSITION_STEP,
+      }),
+
+      todo: Factory.extend<ITodo>({
+        id: () => nanoid(),
+        title: () => firstToUpperCase(faker.lorem.sentence(faker.mersenne.rand(2, 5))),
+        addedAt: () => faker.date.recent().toISOString(),
+        position: (i) => (i + 1) * POSITION_STEP,
+        description: () => faker.lorem.sentence(faker.mersenne.rand(0, 10)),
+        listId: () => {
+          if (listIds.length === 0) {
+            throw new InvalidDataError('Todo cannot exists without list.');
+          }
+
+          const index = faker.mersenne.rand(0, LISTS_COUNT);
+          return listIds[index];
         },
       }),
     },
@@ -255,6 +474,7 @@ export default function makeServer({ environment = 'development' }) {
     seeds(server) {
       server.createList('table', TABLES_COUNT);
       server.createList('list', LISTS_COUNT);
+      server.createList('todo', TODOS_COUNT);
     },
 
     serializers: {
@@ -270,6 +490,7 @@ export default function makeServer({ environment = 'development' }) {
 
       configureTablesEndpoints(this);
       configureListsEndpoints(this);
+      configureTodosEndpoints(this);
     },
   });
 }

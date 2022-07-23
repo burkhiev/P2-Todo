@@ -1,45 +1,37 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import styles from './EditTodoForm.css';
 
 import { useAppSelector } from '../../../../hooks/reduxHooks';
-import { TodoId } from '../../../../models/ITodo';
-import { removeTodo, selectTodoById, updateTodoText } from '../../../../store/todo/todoSlice';
+import { ITodo, TodoId } from '../../../../models/ITodo';
 import BtnStyles from '../../shared/buttons/BootstrapBtnStyles';
 import FieldEditor from '../../shared/editors/FieldEditor';
 import useTodoValidators from '../../../../hooks/useTodoValidators';
+import { selectTodoById, useDeleteTodo, useUpdateTodo } from '../../../../store/api/todoSlice';
 
 const NO_EXIST_TODO_ID_ERR_MSG = 'Invalid argument error. Non-existent "todoId" received.';
-
 export const EditTodoForm_TestId = 'EditTodoForm';
 
 interface ITodoCardEditorProps {
   todoId: TodoId,
-  onRemove?: () => void,
-  onClose?: (...args: any[]) => void,
+  onClose: (...args: any[]) => void,
 }
 
 export default function EditTodoForm(args: ITodoCardEditorProps) {
-  const {
-    todoId,
-    onClose: onCloseAction = () => { },
-    onRemove = () => { },
-  } = args;
+  const { todoId, onClose: onCloseAction } = args;
 
   const todo = useAppSelector((state) => selectTodoById(state, todoId));
   if (!todo) {
     throw new Error(NO_EXIST_TODO_ID_ERR_MSG);
   }
 
-  const dispatch = useDispatch();
-
   const [validateTitle] = useTodoValidators();
-
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description);
   const [isTitleValid, setIsTitleValid] = useState(validateTitle(todo.title));
   const [isValidated, setIsValidated] = useState(false);
+  const [updateTodo] = useUpdateTodo();
+  const [deleteTodo] = useDeleteTodo();
 
   function onTitleChange(value: string) {
     setTitle(value);
@@ -65,13 +57,14 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
   function onSaveTodo(e?: React.MouseEvent) {
     e?.stopPropagation();
 
-    if (isTitleValid) {
-      dispatch(updateTodoText({
-        todoId,
+    if (isTitleValid && todo) {
+      const newTodo: ITodo = {
+        ...todo,
         title,
         description,
-      }));
+      };
 
+      updateTodo(newTodo);
       resetStates();
       onCloseAction();
     }
@@ -79,14 +72,14 @@ export default function EditTodoForm(args: ITodoCardEditorProps) {
     setIsValidated(true);
   }
 
-  function onRemoveTodo(e: React.MouseEvent) {
+  async function onRemoveTodo(e: React.MouseEvent) {
     e.stopPropagation();
 
-    dispatch(removeTodo(todoId));
-    resetStates();
-    onRemove();
-
-    onCloseAction();
+    if (todo) {
+      await deleteTodo(todo.id).unwrap();
+      resetStates();
+      onCloseAction();
+    }
   }
 
   const content = (

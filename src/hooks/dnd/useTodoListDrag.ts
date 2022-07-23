@@ -15,9 +15,7 @@ export default function useTodoListDrag(listId: TodoListId)
 
   const [collect, drag] = useDrag<ITodoList, any, ITodoDragCollectProps>(() => ({
     type: DndTypes.LIST,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
+    collect: (monitor) => ({ isDragging: !!monitor.isDragging() }),
     item: list,
   }));
 

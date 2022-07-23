@@ -7,9 +7,9 @@ import { TodoTableId } from '../../../models/ITodoTable';
 import { selectTableById, useDeleteTable } from '../../../store/api/tableSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
-export const testId_SidebarTableItem = 'SidebarTableItemTestId';
-export const testId_SidebarTableItem_OpenDropdownBtn = 'SidebarTableItem_OpenDropdownBtn';
-export const testId_SidebarTableItem_DeleteBtn = 'SidebarTableItem_DeleteBtn';
+export const SidebarTableItem_TestId = 'SidebarTableItemTestId';
+export const SidebarTableItem_OpenDropdownBtn_TestId = 'SidebarTableItem_OpenDropdownBtn';
+export const SidebarTableItem_DeleteBtn_TestId = 'SidebarTableItem_DeleteBtn';
 
 interface ISidebarTableItemProps {
   tableId: TodoTableId,
@@ -48,7 +48,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   async function onDelete() {
     if (table) {
       try {
-        await deleteTable({ id: table.id }).unwrap();
+        await deleteTable(table.id).unwrap();
         onDeleteTable(table.id);
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -79,7 +79,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
           type="button"
           className="dropdown-item"
           onClick={onDelete}
-          data-testid={testId_SidebarTableItem_DeleteBtn}
+          data-testid={SidebarTableItem_DeleteBtn_TestId}
         >
           Удалить
         </button>
@@ -107,7 +107,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
         ${bgColor}
         ${styles.sidebar_table_item}
       `}
-      data-testid={testId_SidebarTableItem}
+      data-testid={SidebarTableItem_TestId}
     >
       <button
         type="button"
@@ -132,7 +132,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
             ${styles.sidebar_table_item_btn} 
             ${styles.sidebar_table_item_options}
           `}
-          data-testid={testId_SidebarTableItem_OpenDropdownBtn}
+          data-testid={SidebarTableItem_OpenDropdownBtn_TestId}
         >
           <span className="bi bi-three-dots" />
         </button>

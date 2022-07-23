@@ -12,8 +12,8 @@ import { selectAllTablesIds } from '../../../store/api/tableSlice';
 export const testId_SidebarList = 'SidebarList';
 
 interface ISidebarProps {
-  tableId?: TodoTableId,
-  selectTable: (id?: TodoTableId) => void
+  tableId: TodoTableId,
+  selectTable: (id: TodoTableId) => void
 }
 
 export default function Sidebar(props: ISidebarProps) {
@@ -35,28 +35,29 @@ export default function Sidebar(props: ISidebarProps) {
   }
 
   function onDeleteTable(id: TodoTableId) {
-    const index = tableIds.findIndex((tabId) => tabId === id);
-
-    if (index === undefined) {
+    if (tableIds.length === 0) {
+      selectTable(INVALID_TABLE_ID);
       return;
     }
 
-    let nextTableId = tableId;
-
-    if (id === tableId) {
-      if (index > 0) {
-        nextTableId = tableIds[index - 1];
-      } else if (index === 0 && tableIds.length > 1) {
-        [, nextTableId] = tableIds;
-      } else {
-        nextTableId = undefined;
-      }
+    if (id !== tableId) {
+      return;
     }
 
-    selectTable(nextTableId);
+    const index = tableIds.findIndex((tabId) => tabId === id);
+
+    if (index === undefined) {
+      selectTable(tableIds[0]);
+    } else if (index > 0) {
+      selectTable(tableIds[index - 1]);
+    } else if (index === 0 && tableIds.length > 1) {
+      selectTable(tableIds[1]);
+    } else {
+      selectTable(INVALID_TABLE_ID);
+    }
   }
 
-  const renderedTables = tableIds.map((id, index) => (
+  const renderedTableItems = tableIds.map((id, index) => (
     <SidebarTableItem
       key={id}
       tableId={id}
@@ -78,7 +79,7 @@ export default function Sidebar(props: ISidebarProps) {
           className="mb-3"
           data-testid={testId_SidebarList}
         >
-          {renderedTables}
+          {renderedTableItems}
         </div>
         <div className="mx-2">
           <SidebarTableCreatorExpander

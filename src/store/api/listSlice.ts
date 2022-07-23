@@ -5,30 +5,10 @@ import { TodoTableId } from '../../models/ITodoTable';
 import ITodoListResource from '../../models/json-api-models/ITodoListResource';
 import InvalidDataError from '../../service/errors/InvalidDataError';
 import { RootState } from '../store';
-import { TodoListDropSide } from '../../components/body/table/Table';
 import apiSlice, {
   ALL_LISTS_TAG_ID,
-  EMPTY_LIST_TAG_ID,
-  LIST_TAG_ID,
   LIST_TAG_TYPE,
 } from './apiSlice';
-
-export interface IMoveListPayload {
-  /**
-   * Id списка который взят посредством Drag and Drop.
-   */
-  draggedList: ITodoList,
-  /**
-   * Id списка рядом с которым находится взятый
-   * с помощью Drag and Drop список.
-   */
-  targetList: ITodoList,
-  /**
-   * Будущая позиция вставляемого списка относительно
-   * списка с id = targetListId.
-   */
-  dropSide: TodoListDropSide
-}
 
 export const EmptyListResultDescription = [{ type: LIST_TAG_TYPE, id: ALL_LISTS_TAG_ID }] as const;
 
@@ -61,16 +41,30 @@ const listSlice = apiSlice.injectEndpoints({
         return listAdapter.setAll(initialApiState, lists);
       },
 
+      // onQueryStarted: async (_, api) => {
+      //   const { dispatch, queryFulfilled } = api;
+
+      //   try {
+      //     const response = await queryFulfilled;
+      //     dispatch(
+      //       listSlice.util.updateQueryData('getLists', undefined, draft =>
+      //         listAdapter.setAll(initialApiState, response.data))
+      //     )
+      //   } catch (error) {
+
+      //   }
+      // },
+
       providesTags(result) {
         const listsIds = result?.ids;
 
         if (!listsIds) {
-          return [{ type: LIST_TAG_TYPE, id: EMPTY_LIST_TAG_ID } as const];
+          return [];
         }
 
         const listsTags = [
           ...listsIds.map((id) => ({ type: LIST_TAG_TYPE, id } as const)),
-          { type: LIST_TAG_TYPE, id: LIST_TAG_ID } as const,
+          { type: LIST_TAG_TYPE, id: ALL_LISTS_TAG_ID } as const,
         ];
 
         return listsTags;
@@ -100,8 +94,6 @@ const listSlice = apiSlice.injectEndpoints({
         }
 
         const list: ITodoList = { id, ...attributes };
-        listAdapter.addOne(initialApiState, list);
-
         return list;
       },
 
@@ -109,7 +101,7 @@ const listSlice = apiSlice.injectEndpoints({
         if (error) {
           return EmptyListResultDescription;
         }
-        return [{ type: LIST_TAG_TYPE, id: LIST_TAG_ID }];
+        return [{ type: LIST_TAG_TYPE, id: ALL_LISTS_TAG_ID }];
       },
     }),
 
@@ -136,8 +128,6 @@ const listSlice = apiSlice.injectEndpoints({
         }
 
         const list: ITodoList = { id, ...attributes };
-        listAdapter.upsertOne(initialApiState, list);
-
         return list;
       },
 
@@ -158,7 +148,6 @@ const listSlice = apiSlice.injectEndpoints({
 
       transformResponse: (response: { data: ITodoListResource }) => {
         const { data } = response;
-        listAdapter.removeOne(initialApiState, data.id);
         return data;
       },
 
@@ -174,7 +163,7 @@ const listSlice = apiSlice.injectEndpoints({
       query: (args) => ({
         url: 'move-lists',
         method: 'PUT',
-        body: { data: args.data },
+        body: { args },
       }),
 
       async onQueryStarted(args, api) {
@@ -245,9 +234,8 @@ export const {
   useMoveListMutation: useMoveList,
 } = listSlice;
 
-const selectGetListsResult = listSlice.endpoints.getLists.select(undefined);
 const selectGetListsData = createSelector(
-  selectGetListsResult,
+  listSlice.endpoints.getLists.select(undefined),
   (result) => result.data,
 );
 
@@ -259,11 +247,10 @@ export const {
 export const selectAllListsIds = (state: RootState) =>
   selectAllLists(state).map((list) => list.id);
 
-export const selectListsByTableId = (state: RootState, tableId?: TodoTableId) =>
+export const selectListsByTableId = (state: RootState, tableId: TodoTableId) =>
   selectAllLists(state).filter((list) => list.tableId === tableId);
 
-export const selectLastListsPositionOnTable = (state: RootState, tableId?: TodoTableId) =>
-  selectAllLists(state)
-    .filter((list) => list.tableId === tableId)
+export const selectLastListsPositionOnTable = (state: RootState, tableId: TodoTableId) =>
+  selectListsByTableId(state, tableId)
     .map((list) => list.position)
     .reduce((prev, cur) => Math.max(prev, cur), 0);

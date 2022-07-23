@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import useTodoDropInfo from '../../../hooks/dnd/useTodoDropInfo';
+import React, { useState } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 import { useAppSelector } from '../../../hooks/reduxHooks';
-import { TodoId } from '../../../models/ITodo';
 
 import { TodoListId } from '../../../models/ITodoList';
 import { selectListById } from '../../../store/api/listSlice';
+import { selectTodosByListId } from '../../../store/api/todoSlice';
 import OpenCreateFormBtn from '../shared/buttons/OpenCreateFormBtn';
 import CreateTodoForm from './CreateTodoForm';
 
@@ -12,14 +12,13 @@ export const CreateTodoExpander_TestId = 'CreateTodoExpander';
 export const CreateTodoExpanderOpenBtn_TestId = 'CreateTodoExpanderOpenBtn';
 
 interface ICreateTodoExpanderProps {
-  listId: TodoListId,
-  setPlaceholder: (todoId?: TodoId) => void
+  listId: TodoListId
 }
 
 export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
-  const { listId, setPlaceholder } = props;
-
+  const { listId } = props;
   const list = useAppSelector((state) => selectListById(state, listId));
+
   if (!list) {
     throw new Error('Invalid listId prop.');
   }
@@ -34,39 +33,31 @@ export default function CreateTodoExpander(props: ICreateTodoExpanderProps) {
     setIsOpened(false);
   }
 
-  const [{ todoIsOver }, drop] = useTodoDropInfo();
-
-  useEffect(() => {
-    if (todoIsOver) {
-      setPlaceholder();
-    }
-
-  //   Вызов setPlaceholder обновляет список показываемых элементов, в следствие
-  // чего обновляется функция setPlaceholder и снова вызывается useEffect.
-  // Таким образом компонент впадает в бесконечный цикл.
-  //   Но убрав setPlaceholder из списка зависимостей можно рискнуть
-  // вызовом старой версии функции. В данном случае это не страшно,
-  // т.к. функция setPlaceholder является частью props, и при её
-  // изменении компонент создаст новый рендер.
-  //
-  // Использование useCallback c setPlaceholder ситуацию не спасает.
-  //
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [todoIsOver]);
+  const todos = useAppSelector((state) => selectTodosByListId(state, list.id));
+  const expanderIndex = todos.length;
+  const expanderDragId = `CreateTodoExpander_ListId=${list.id}`;
 
   return (
-    <div
-      data-testid={CreateTodoExpander_TestId}
-      ref={drop}
-    >
-      {isOpened && <CreateTodoForm listId={listId} onClose={onCloseAddForm} />}
-      {!isOpened && (
-        <OpenCreateFormBtn
-          text="Добавить карточку"
-          onOpen={onOpenAddForm}
-          testId={CreateTodoExpanderOpenBtn_TestId}
-        />
+    // CreateTodoExpander не является "draggable" элементом, но для корректного
+    // анимированного взаимодействия необходимо "завернуть" компонент в Draggable
+    <Draggable draggableId={expanderDragId} index={expanderIndex} isDragDisabled>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          data-testid={CreateTodoExpander_TestId}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...provided.draggableProps}
+        >
+          {isOpened && <CreateTodoForm listId={listId} onClose={onCloseAddForm} />}
+          {!isOpened && (
+            <OpenCreateFormBtn
+              text="Добавить карточку"
+              onOpen={onOpenAddForm}
+              testId={CreateTodoExpanderOpenBtn_TestId}
+            />
+          )}
+        </div>
       )}
-    </div>
+    </Draggable>
   );
 }

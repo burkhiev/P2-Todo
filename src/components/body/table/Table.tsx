@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 import styles from './Table.css';
 
 import { TodoTableId } from '../../../models/ITodoTable';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import ListCreatorExpander from '../lists/ListCreator/ListCreatorExpander';
-import ListDragDropWrap from '../lists/ListDragDropWrap';
 import ListPlaceholder from '../lists/ListPlaceholder/ListPlaceholder';
 import { ITodoList, TodoListId } from '../../../models/ITodoList';
-import useTodoListDropInfo from '../../../hooks/dnd/useTodoListDropInfo';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
 import TablePlaceholder from './TablePlaceholder/TablePlaceholder';
 import { selectTableById } from '../../../store/api/tableSlice';
 import { selectListsByTableId, useGetLists } from '../../../store/api/listSlice';
+import { useGetTodos, useMoveTodo } from '../../../store/api/todoSlice';
+import List from '../lists/List/List';
+import DndTypes from '../../../service/DndTypes';
+import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
 
 export const testId_Table_Header = 'Table_Header';
 
@@ -36,23 +39,32 @@ export interface IOnDropReturnType {
 
 interface ITableProps {
   tableId?: TodoTableId,
-  isLoading: boolean
 }
 
 export default function Table(props: ITableProps) {
-  const { tableId, isLoading } = props;
-
+  const { tableId } = props;
   const table = useAppSelector((state) => selectTableById(state, tableId ?? INVALID_TABLE_ID));
-  const lists = useAppSelector((state) => selectListsByTableId(state, table?.id));
+
+  if (!table) {
+    throw new InvalidArgumentError('Invalid table ID received.');
+  }
+
+  const lists = useAppSelector((state) => selectListsByTableId(state, table.id));
+
+  const [placeholderIndex, setPlaceholderIndex] = useState(-1);
+  const [placeholderDropSide, setPlaceholderDropSide] = useState(TodoListDropSide.AFTER);
+  const [fadedListIndex, setFadedListIndex] = useState(-1);
+  const [moveTodo] = useMoveTodo(undefined);
 
   const {
     isLoading: isListsLoading,
     isSuccess: isListsSuccess,
   } = useGetLists(undefined);
 
-  const [placeholderIndex, setPlaceholderIndex] = useState(-1);
-  const [placeholderDropSide, setPlaceholderDropSide] = useState(TodoListDropSide.AFTER);
-  const [fadedListIndex, setFadedListIndex] = useState(-1);
+  const {
+    isLoading: isTodosLoading,
+    isSuccess: isTodosSuccess,
+  } = useGetTodos(undefined);
 
   function setDefaultStates() {
     setFadedListIndex(-1);
@@ -60,30 +72,22 @@ export default function Table(props: ITableProps) {
     setPlaceholderDropSide(TodoListDropSide.AFTER);
   }
 
-  const [{ listIsOver }] = useTodoListDropInfo();
+  // function onDragging(index: number) {
+  //   setFadedListIndex(index);
 
-  useEffect(() => {
-    if (!listIsOver) {
-      setDefaultStates();
-    }
-  }, [listIsOver]);
+  //   if (lists.length === 1) {
+  //     setPlaceholderIndex(index);
+  //     return;
+  //   }
 
-  function onDragging(index: number) {
-    setFadedListIndex(index);
-
-    if (lists.length === 1) {
-      setPlaceholderIndex(index);
-      return;
-    }
-
-    if (index > 0) {
-      setPlaceholderIndex(index - 1);
-      setPlaceholderDropSide(TodoListDropSide.AFTER);
-    } else {
-      setPlaceholderIndex(index + 1);
-      setPlaceholderDropSide(TodoListDropSide.BEFORE);
-    }
-  }
+  //   if (index > 0) {
+  //     setPlaceholderIndex(index - 1);
+  //     setPlaceholderDropSide(TodoListDropSide.AFTER);
+  //   } else {
+  //     setPlaceholderIndex(index + 1);
+  //     setPlaceholderDropSide(TodoListDropSide.BEFORE);
+  //   }
+  // }
 
   function onDrop(arg: IOnDropArg): (IOnDropReturnType | undefined) {
     const { listId, placeholderDropSide: phDropSide, placeholderIndex: phIndex } = arg;
@@ -103,34 +107,25 @@ export default function Table(props: ITableProps) {
     return { list, dropSide: phDropSide };
   }
 
-  function onDropOver(index: number) {
-    if (placeholderIndex === index) {
-      if (placeholderDropSide === TodoListDropSide.AFTER) {
-        setPlaceholderDropSide(TodoListDropSide.BEFORE);
-      } else {
-        setPlaceholderDropSide(TodoListDropSide.AFTER);
-      }
-    }
+  // function onDropOver(index: number) {
+  //   if (placeholderIndex === index) {
+  //     if (placeholderDropSide === TodoListDropSide.AFTER) {
+  //       setPlaceholderDropSide(TodoListDropSide.BEFORE);
+  //     } else {
+  //       setPlaceholderDropSide(TodoListDropSide.AFTER);
+  //     }
+  //   }
 
-    setPlaceholderIndex(index);
-  }
+  //   setPlaceholderIndex(index);
+  // }
 
   let listContent: JSX.Element[] = [];
 
   if (!isListsLoading && isListsSuccess) {
     listContent = lists.map((list, index) => {
-      let content;
-
-      if (fadedListIndex !== index) {
-        content = (
-          <ListDragDropWrap
-            listId={list.id}
-            key={list.id}
-            onDragging={() => onDragging(index)}
-            onDropOver={() => onDropOver(index)}
-          />
-        );
-      }
+      const content = fadedListIndex !== index
+        ? <List listId={list.id} key={list.id} />
+        : undefined;
 
       let beforeContent;
       let afterContent;
@@ -162,7 +157,7 @@ export default function Table(props: ITableProps) {
 
   let content: any;
 
-  if (!isLoading && !isListsLoading && table) {
+  if (!isListsLoading && table) {
     content = (
       <div className={`bg-white ${styles.table_container}`}>
         <div
@@ -182,10 +177,43 @@ export default function Table(props: ITableProps) {
   } else {
     content = (
       <div className={`border bg-white ${styles.table}`}>
-        <TablePlaceholder isLoading={isLoading} />
+        <TablePlaceholder isLoading={isListsLoading} />
       </div>
     );
   }
 
-  return content;
+  const onTodoDragEnd = useCallback((result: DropResult) => {
+    const { source, destination, draggableId } = result;
+
+    if (isTodosLoading || !isTodosSuccess) {
+      return;
+    }
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      source.droppableId === destination.droppableId
+      && source.index === destination.index
+    ) {
+      return;
+    }
+
+    if (result.type === DndTypes.TODO) {
+      moveTodo({
+        todoId: draggableId,
+        srcListId: source.droppableId,
+        srcIndex: source.index,
+        destListId: destination.droppableId,
+        destIndex: destination.index,
+      });
+    }
+  }, [isTodosSuccess, isTodosLoading, moveTodo]);
+
+  return (
+    <DragDropContext onDragEnd={onTodoDragEnd}>
+      {content}
+    </DragDropContext>
+  );
 }

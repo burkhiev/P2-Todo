@@ -12,7 +12,7 @@ import {
   MIN_POSITION, POSITION_STEP,
 } from '../../service/Consts';
 
-import { RootState } from '../store';
+// import { RootState } from '../store';
 import { ITodo, TodoId } from '../../models/ITodo';
 import { TodoListId } from '../../models/ITodoList';
 import { IAddTodoDto } from '../../models/IAddTodoDto';
@@ -213,20 +213,20 @@ export const {
   moveTodo,
 } = todoSlice.actions;
 
-export const {
-  selectAll: selectAllTodos,
-  selectIds: selectAllTodoIds,
-  selectById: selectTodoById,
-} = todoAdapter.getSelectors<RootState>((state) => state.todo.todos);
+// export const {
+//   selectAll: selectAllTodos,
+//   selectIds: selectAllTodoIds,
+//   selectById: selectTodoById,
+// } = todoAdapter.getSelectors<RootState>((state) => state.todo.todos);
 
-export const selectTodosByListId = (state: RootState, listId: TodoListId) =>
-  selectAllTodos(state)
-    .filter((todo) => todo.listId === listId)
-    .sort((a, b) => a.position - b.position);
+// export const selectTodosByListId = (state: RootState, listId: TodoListId) =>
+//   selectAllTodos(state)
+//     .filter((todo) => todo.listId === listId)
+//     .sort((a, b) => a.position - b.position);
 
-export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
-  selectTodosByListId(state, listId)
-    .map((todo) => todo.id);
+// export const selectTodoIdsByListId = (state: RootState, listId: TodoListId) =>
+//   selectTodosByListId(state, listId)
+//     .map((todo) => todo.id);
 
 // export const selectTodoIdsByTableId = (state: RootState, tableId: TodoTableId) => {
 //   const allLists = Object.values(state.todo.lists.entities);

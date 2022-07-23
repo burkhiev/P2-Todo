@@ -1,11 +1,9 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
 
-import todoReducer from './todo/combinedReducers';
 import styleReducer from './style/combinedReducers';
 import apiSlice from './api/apiSlice';
 
 const rootReducer = combineReducers({
-  todo: todoReducer,
   style: styleReducer,
   api: apiSlice.reducer,
 });

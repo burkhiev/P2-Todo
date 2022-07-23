@@ -1,5 +1,5 @@
 const DndTypes = {
-  CARD: 'DND_CARD',
+  TODO: 'DND_TODO',
   LIST: 'DND_LIST',
 };
 

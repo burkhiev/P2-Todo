@@ -10,8 +10,8 @@ import FieldEditor from '../../body/shared/editors/FieldEditor';
 const INVALID_TABLE_ID_ERR_MSG = 'Invalid argument error.'
   + ' Non-existed "tableId" received.';
 
-export const testId_SidebarEditTableTitleForm = 'SidebarEditTableTitleForm';
-export const testId_SidebarEditTableTitleForm_Field = 'SidebarEditTableTitleForm_Field';
+export const SidebarEditTableTitleForm_TestId = 'SidebarEditTableTitleForm';
+export const SidebarEditTableTitleForm_Field_TestId = 'SidebarEditTableTitleForm_Field';
 
 interface ISidebarEditTableTitleFormProps {
   tableId: TodoTableId,
@@ -50,7 +50,7 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
   return (
     <div
       className="d-flex ps-3 w-100"
-      data-testid={testId_SidebarEditTableTitleForm}
+      data-testid={SidebarEditTableTitleForm_TestId}
     >
       <FieldEditor
         isLoading={isLoading}
@@ -62,7 +62,7 @@ export default function SidebarEditTableTitleForm(props: ISidebarEditTableTitleF
         onEntered={onEntered}
         placeholder="Введите название"
         takeFocus
-        testId={testId_SidebarEditTableTitleForm_Field}
+        testId={SidebarEditTableTitleForm_Field_TestId}
       />
     </div>
   );

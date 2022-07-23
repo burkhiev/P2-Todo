@@ -1,16 +1,9 @@
 import { createEntityAdapter, createSelector, EntityState } from '@reduxjs/toolkit';
-// import { FetchBaseQueryError, FetchBaseQueryMeta } from '@reduxjs/toolkit/dist/query';
-// import { ResultDescription } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 
 import { ITodoTable, TodoTableId } from '../../models/ITodoTable';
 import ITodoTableResource from '../../models/json-api-models/ITodoTableResource';
 import { RootState } from '../store';
-import apiSlice, { EMPTY_TABLE_TAG_ID, TABLE_TAG_ID, TABLE_TAG_TYPE } from './apiSlice';
-
-export const EmptyTableResultDescription = [{
-  type: TABLE_TAG_TYPE,
-  id: EMPTY_TABLE_TAG_ID,
-}] as const;
+import apiSlice, { TABLE_TAG_ID, TABLE_TAG_TYPE } from './apiSlice';
 
 export const tableAdapter = createEntityAdapter<ITodoTable>({
   selectId: (table) => table.id,
@@ -67,16 +60,25 @@ const tableSlice = apiSlice.injectEndpoints({
 
       transformResponse: (response: { data: ITodoTableResource }) => {
         const { data: { id, attributes } } = response;
-
         const table: ITodoTable = { id, name: attributes?.name ?? '' };
-        tableAdapter.addOne(initialApiState, table);
-
         return table;
+      },
+
+      onQueryStarted: async (_, api) => {
+        const { dispatch, queryFulfilled } = api;
+
+        try {
+          const response = await queryFulfilled;
+          dispatch(tableSlice.util.updateQueryData('getTables', undefined, (draft) =>
+            tableAdapter.setOne(draft, response.data)));
+        } catch (error) {
+          // пусто
+        }
       },
 
       invalidatesTags(_, error) {
         if (error) {
-          return EmptyTableResultDescription;
+          return [];
         }
         return [{ type: TABLE_TAG_TYPE, id: TABLE_TAG_ID }];
       },
@@ -101,41 +103,62 @@ const tableSlice = apiSlice.injectEndpoints({
 
       transformResponse: (response: { data: ITodoTableResource }) => {
         const { data: { id, attributes } } = response;
-
         const table: ITodoTable = { id, name: attributes?.name ?? '' };
-        tableAdapter.upsertOne(initialApiState, table);
-
         return { ...table };
       },
 
-      invalidatesTags(result, error) {
-        if (error) {
-          return EmptyTableResultDescription;
+      onQueryStarted: async (arg, api) => {
+        const table = arg;
+        const { dispatch, queryFulfilled } = api;
+
+        const updateResult = dispatch(
+          tableSlice.util.updateQueryData('getTables', undefined, (draft) =>
+            tableAdapter.updateOne(draft, {
+              id: table.id,
+              changes: { name: table.name },
+            })),
+        );
+
+        try {
+          const response = await queryFulfilled;
+          dispatch(tableSlice.util.updateQueryData('getTables', undefined, (draft) =>
+            tableAdapter.upsertOne(draft, response.data)));
+        } catch (error) {
+          updateResult.undo();
         }
-        return [{ type: TABLE_TAG_TYPE, id: result?.id }];
       },
     }),
 
-    deleteTable: builder.mutation<{ id: TodoTableId }, { id: TodoTableId }>({
-      query: (args) => ({
-        url: 'table',
-        method: 'DELETE',
-        body: { data: args },
-      }),
+    deleteTable: builder.mutation<TodoTableId, TodoTableId>({
+      query: (tableId) => {
+        const data: ITodoTableResource = {
+          type: 'table',
+          id: tableId,
+        };
+
+        return {
+          url: 'table',
+          method: 'DELETE',
+          body: { data },
+        };
+      },
 
       transformResponse: (response: { data: ITodoTableResource }) => {
         const { data: { id } } = response;
-
         tableAdapter.removeOne(initialApiState, id);
-
-        return { id };
+        return id;
       },
 
-      invalidatesTags(result, error) {
-        if (error) {
-          return EmptyTableResultDescription;
+      onQueryStarted: async (_, api) => {
+        const { dispatch, queryFulfilled } = api;
+
+        try {
+          const response = await queryFulfilled;
+          dispatch(tableSlice.util.updateQueryData('getTables', undefined, (draft) =>
+            tableAdapter.removeOne(draft, response.data)));
+        } catch (error) {
+          // deleteResult.undo();
         }
-        return [{ type: TABLE_TAG_TYPE, id: result?.id }];
       },
     }),
   }),

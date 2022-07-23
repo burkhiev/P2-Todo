@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+// import { DndProvider } from 'react-dnd';
+// import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 
 import setupStore, { AppStore } from '../../../store/store';
@@ -14,9 +14,10 @@ export default function AppProviders(props: PropsWithChildren<IAppProvidersProps
 
   return (
     <Provider store={store ?? setupStore()}>
-      <DndProvider backend={HTML5Backend}>
+      {/* <DndProvider backend={HTML5Backend}>
         {children}
-      </DndProvider>
+      </DndProvider> */}
+      {children}
     </Provider>
   );
 }

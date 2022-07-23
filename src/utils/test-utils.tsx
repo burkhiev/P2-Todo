@@ -23,7 +23,7 @@ export default function renderWithProviders(
     ...renderOptions
   }: ExtendedRenderOptions = {},
 ) {
-  function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
+  function Wrapper({ children }: PropsWithChildren) {
     return (
       <MemoryRouter initialEntries={['/']}>
         <AppProviders store={store}>

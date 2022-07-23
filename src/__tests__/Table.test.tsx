@@ -1,7 +1,6 @@
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import {
-  act,
   RenderResult,
   findByText as g_findByText,
   waitFor,
@@ -9,24 +8,27 @@ import {
 } from '@testing-library/react';
 
 import {
-  testId_SidebarTableItem_DeleteBtn,
-  testId_SidebarTableItem_OpenDropdownBtn,
-  testId_SidebarTableItem,
+  SidebarTableItem_DeleteBtn_TestId,
+  SidebarTableItem_OpenDropdownBtn_TestId,
+  SidebarTableItem_TestId,
 } from '../components/sidebar/SidebarTableItem/SidebarTableItem';
 import {
-  testId_SidebarCreateTableForm_NameField,
-  testId_SidebarCreateTableForm_AcceptBtn,
+  SidebarCreateTableForm_NameField_TestId,
+  SidebarCreateTableForm_AcceptBtn_TestId,
+  SidebarCreateTableForm_TestId,
 } from '../components/sidebar/SidebarCreateTableForm/SidebarCreateTableForm';
 import {
-  testId_TablePlaceholder_Spinner,
-  testId_TablePlaceholder,
+  TablePlaceholder_Spinner_TestId,
+  TablePlaceholder_TestId,
 } from '../components/body/table/TablePlaceholder/TablePlaceholder';
+import {
+  SidebarEditTableTitleForm_Field_TestId,
+  SidebarEditTableTitleForm_TestId,
+} from '../components/sidebar/SidebarTableTitle/SidebarEditTableTitleForm';
 import { testId_SidebarOpenCreateForm_OpenBtn } from '../components/sidebar/SidebarTableCreatorExpander';
-import { testId_SidebarTableTitle_Name } from '../components/sidebar/SidebarTableTitle/SidebarTableTitle';
-import { testId_SidebarEditTableTitleForm_Field } from '../components/sidebar/SidebarTableTitle/SidebarEditTableTitleForm';
+import { SidebarTableTitle_Name_TestId } from '../components/sidebar/SidebarTableTitle/SidebarTableTitle';
 import { testId_SidebarList } from '../components/sidebar/Sidebar/Sidebar';
 import { testId_Table_Header } from '../components/body/table/Table';
-
 import createServer from '../mocks/api/mirageApi';
 import renderWithProviders from '../utils/test-utils';
 import Main from '../components/body/Main';
@@ -35,9 +37,7 @@ let server: ReturnType<typeof createServer>;
 let app: RenderResult;
 
 async function renderTestApp() {
-  await act(() => {
-    app = renderWithProviders(<Main />);
-  });
+  app = await renderWithProviders(<Main />);
 }
 
 beforeEach(async () => {
@@ -54,11 +54,11 @@ describe('table crud testing', () => {
     await renderTestApp();
     const { queryAllByTestId, queryByTestId, getByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    expect(queryByTestId(testId_TablePlaceholder)).toBeInTheDocument();
-    expect(queryAllByTestId(testId_SidebarTableItem)).toHaveLength(0);
+    expect(queryByTestId(TablePlaceholder_TestId)).toBeInTheDocument();
+    expect(queryAllByTestId(SidebarTableItem_TestId)).toHaveLength(0);
   });
 
   it('shows tables list when get a few tables from server', async () => {
@@ -67,11 +67,11 @@ describe('table crud testing', () => {
     await renderTestApp();
     const { findByTestId, findAllByTestId, getByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    await findAllByTestId(testId_SidebarTableItem);
-    expect(await findAllByTestId(testId_SidebarTableItem)).toHaveLength(4);
+    await findAllByTestId(SidebarTableItem_TestId);
+    expect(await findAllByTestId(SidebarTableItem_TestId)).toHaveLength(4);
 
     const tableListElem = getByTestId(testId_SidebarList);
 
@@ -86,32 +86,24 @@ describe('table crud testing', () => {
     await renderTestApp();
     const { getByTestId, findByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     const createTableBtnId = testId_SidebarOpenCreateForm_OpenBtn;
-    const tableInputId = testId_SidebarCreateTableForm_NameField;
-    const addBtnId = testId_SidebarCreateTableForm_AcceptBtn;
-    const tableItemId = testId_SidebarTableItem;
+    const tableInputId = SidebarCreateTableForm_NameField_TestId;
+    const addBtnId = SidebarCreateTableForm_AcceptBtn_TestId;
+    const tableItemId = SidebarTableItem_TestId;
 
     const newTableName = 'TABLE_NAME';
 
     const createTableBtn = getByTestId(createTableBtnId);
-    await act(async () => {
-      await userEvent.click(createTableBtn);
-    });
-
+    await userEvent.click(createTableBtn);
     const tableInput = await findByTestId(tableInputId);
-    await act(async () => {
-      await userEvent.type(tableInput, newTableName);
-    });
+    await userEvent.type(tableInput, newTableName);
+    await userEvent.click(getByTestId(addBtnId));
 
-    await act(async () => {
-      await userEvent.click(getByTestId(addBtnId));
-    });
-
-    await findByTestId(testId_TablePlaceholder_Spinner);
-    await waitForElementToBeRemoved(() => getByTestId(testId_TablePlaceholder_Spinner));
+    await findByTestId(SidebarCreateTableForm_TestId);
+    await waitForElementToBeRemoved(() => getByTestId(SidebarCreateTableForm_TestId));
 
     const tables = server.schema.all('table');
     expect(tables.length).toEqual(1);
@@ -125,23 +117,21 @@ describe('table crud testing', () => {
     server.create('table');
     await renderTestApp();
 
-    const { getByTestId, queryAllByTestId } = app;
+    const { getByTestId, queryByTestId, queryAllByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    const optionsBtnId = testId_SidebarTableItem_OpenDropdownBtn;
-    const deleteBtnId = testId_SidebarTableItem_DeleteBtn;
-    const itemId = testId_SidebarTableItem;
+    const optionsBtnId = SidebarTableItem_OpenDropdownBtn_TestId;
+    const deleteBtnId = SidebarTableItem_DeleteBtn_TestId;
+    const itemId = SidebarTableItem_TestId;
 
-    await act(() => getByTestId(optionsBtnId).click());
-    await act(() => getByTestId(deleteBtnId).click());
+    await userEvent.click(getByTestId(optionsBtnId));
+    await userEvent.click(getByTestId(deleteBtnId));
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitForElementToBeRemoved(() => queryByTestId(itemId));
 
     expect(queryAllByTestId(itemId)).toHaveLength(0);
-
     const tables = server.schema.all('table');
     expect(tables.length).toEqual(0);
   });
@@ -157,41 +147,27 @@ describe('table crud testing', () => {
       getByTestId, getAllByTestId, findByTestId,
     } = app;
 
-    let spinner = await findByTestId(testId_TablePlaceholder_Spinner);
+    const spinner = await findByTestId(TablePlaceholder_Spinner_TestId);
     if (spinner) {
       await waitForElementToBeRemoved(spinner);
     }
 
-    expect(getAllByTestId(testId_SidebarTableItem)).toHaveLength(1);
+    expect(getAllByTestId(SidebarTableItem_TestId)).toHaveLength(1);
 
-    // Имя таблицы в заголовке sidebar'а появляется с задержкой
-    const tableNameBtn = getByTestId(testId_SidebarTableTitle_Name);
+    const tableNameBtn = getByTestId(SidebarTableTitle_Name_TestId);
     expect(await g_findByText(tableNameBtn, oldTableName)).toBeInTheDocument();
 
-    await act(async () => {
-      await userEvent.click(tableNameBtn);
-    });
+    await userEvent.click(tableNameBtn);
 
-    const tableNameInput = getByTestId(testId_SidebarEditTableTitleForm_Field);
-    await act(async () => {
-      await userEvent.clear(tableNameInput);
-    });
+    const tableNameInput = getByTestId(SidebarEditTableTitleForm_Field_TestId);
+    await userEvent.clear(tableNameInput);
+    await userEvent.type(tableNameInput, newTableName);
+    await userEvent.keyboard('{enter}');
 
-    await act(async () => {
-      await userEvent.type(tableNameInput, newTableName);
-    });
+    await waitForElementToBeRemoved(getAllByTestId(SidebarEditTableTitleForm_TestId));
 
-    await act(async () => {
-      await userEvent.keyboard('{enter}');
-    });
-
-    spinner = await findByTestId(testId_TablePlaceholder_Spinner);
-    if (spinner) {
-      await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
-    }
-
-    expect(getByTestId(testId_SidebarTableTitle_Name)).toHaveTextContent(newTableName);
-    expect(getAllByTestId(testId_SidebarTableItem)).toHaveLength(1);
+    expect(getByTestId(SidebarTableTitle_Name_TestId)).toHaveTextContent(newTableName);
+    expect(getAllByTestId(SidebarTableItem_TestId)).toHaveLength(1);
   });
 
   it('doesn\'t rename table if name is empty', async () => {
@@ -204,32 +180,24 @@ describe('table crud testing', () => {
       getByTestId, getAllByTestId, findByTestId,
     } = app;
 
-    const spinner = await findByTestId(testId_TablePlaceholder_Spinner);
+    const spinner = await findByTestId(TablePlaceholder_Spinner_TestId);
     if (spinner) {
       await waitForElementToBeRemoved(spinner);
     }
 
-    expect(getAllByTestId(testId_SidebarTableItem)).toHaveLength(1);
+    expect(getAllByTestId(SidebarTableItem_TestId)).toHaveLength(1);
 
     // Имя таблицы в заголовке sidebar'а появляется с задержкой
-    const tableNameBtn = getByTestId(testId_SidebarTableTitle_Name);
+    const tableNameBtn = getByTestId(SidebarTableTitle_Name_TestId);
     expect(await g_findByText(tableNameBtn, oldTableName)).toBeInTheDocument();
 
-    await act(async () => {
-      await userEvent.click(tableNameBtn);
-    });
+    await userEvent.click(tableNameBtn);
+    const tableNameInput = getByTestId(SidebarEditTableTitleForm_Field_TestId);
+    await userEvent.clear(tableNameInput);
+    await userEvent.keyboard('{enter}');
 
-    const tableNameInput = getByTestId(testId_SidebarEditTableTitleForm_Field);
-    await act(async () => {
-      await userEvent.clear(tableNameInput);
-    });
-
-    await act(async () => {
-      await userEvent.keyboard('{enter}');
-    });
-
-    expect(getByTestId(testId_SidebarEditTableTitleForm_Field)).toBeInTheDocument();
-    expect(getByTestId(testId_SidebarEditTableTitleForm_Field)).toHaveTextContent('');
-    expect(getByTestId(testId_SidebarEditTableTitleForm_Field)).toHaveClass('is-invalid');
+    expect(getByTestId(SidebarEditTableTitleForm_Field_TestId)).toBeInTheDocument();
+    expect(getByTestId(SidebarEditTableTitleForm_Field_TestId)).toHaveTextContent('');
+    expect(getByTestId(SidebarEditTableTitleForm_Field_TestId)).toHaveClass('is-invalid');
   });
 });

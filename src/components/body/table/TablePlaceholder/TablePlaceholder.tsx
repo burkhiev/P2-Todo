@@ -2,8 +2,8 @@ import React from 'react';
 
 import styles from './TablePlaceholder.css';
 
-export const testId_TablePlaceholder = 'TablePlaceholder';
-export const testId_TablePlaceholder_Spinner = 'TablePlaceholder_Spinner';
+export const TablePlaceholder_TestId = 'TablePlaceholder';
+export const TablePlaceholder_Spinner_TestId = 'TablePlaceholder_Spinner';
 
 interface ITablePlaceholderProps {
   isLoading: boolean
@@ -23,7 +23,7 @@ export default function TablePlaceholder(props: ITablePlaceholderProps) {
     content = (
       <div
         className={styles.table_placeholder_icon}
-        data-testid={testId_TablePlaceholder_Spinner}
+        data-testid={TablePlaceholder_Spinner_TestId}
       >
         <div className="spinner-border spinner-border-sm" role="status">
           <span className="visually-hidden">Загрузка...</span>
@@ -35,7 +35,7 @@ export default function TablePlaceholder(props: ITablePlaceholderProps) {
   return (
     <div
       className={`${styles.table_placeholder_container}`}
-      data-testid={testId_TablePlaceholder}
+      data-testid={TablePlaceholder_TestId}
     >
       <div className={`${styles.table_placeholder}`}>
         {content}

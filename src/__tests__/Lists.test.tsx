@@ -1,5 +1,4 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import {
   RenderResult,
   waitFor,
@@ -10,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { nanoid } from '@reduxjs/toolkit';
 import renderWithProviders from '../utils/test-utils';
 import Main from '../components/body/Main';
-import { testId_TablePlaceholder_Spinner } from '../components/body/table/TablePlaceholder/TablePlaceholder';
+import { TablePlaceholder_Spinner_TestId } from '../components/body/table/TablePlaceholder/TablePlaceholder';
 import { ListCreatorExpander_TestId } from '../components/body/lists/ListCreator/ListCreatorExpander';
 import { List_TestId } from '../components/body/lists/List/List';
 import makeServer from '../mocks/api/mirageApi';
@@ -36,25 +35,34 @@ afterEach(() => {
 });
 
 async function renderTestApp() {
-  act(() => { app = renderWithProviders(<Main />); });
+  app = await renderWithProviders(<Main />);
 }
 
 describe('lists CRUD testing', () => {
   it('should show 4 lists on the table view', async () => {
-    server.create('table');
+    const table = server.create('table');
     const lists = server.createList('list', 4);
 
+    for (let i = 0; i < lists.length; i += 1) {
+      lists[i].tableId = table.id;
+      lists[i].save();
+    }
+
     await renderTestApp();
-    const { getByTestId, findAllByTestId, getByText } = app;
+    const { getByTestId, getAllByTestId, getByText } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    expect((await findAllByTestId(List_TestId)).length).toBe(4);
+    if (getByTestId(TablePlaceholder_Spinner_TestId)) {
+      await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+      await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
+    }
 
-    lists.forEach((list) => {
-      expect(getByText(list.title)).not.toBeNull();
-    });
+    expect(server.schema.all('list').length).toBe(4);
+    expect(getAllByTestId(List_TestId).length).toBe(4);
+
+    lists.forEach((list) => expect(getByText(list.title)).not.toBeNull());
   });
 
   it('should add new list by list form', async () => {
@@ -65,23 +73,19 @@ describe('lists CRUD testing', () => {
       getByTestId, findByTestId, findAllByTestId, getByText,
     } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     const openListFormBtnId = ListCreatorExpander_TestId;
     const listTitleId = CreateListForm_ListTitle_TestId;
     const createBtnId = CreateListForm_CreateBtn_TestId;
     const listTitleText = 'SOME_LIST_TITLE';
 
-    const openListFormBtn = await findByTestId(openListFormBtnId);
-    await act(async () => { await userEvent.click(openListFormBtn); });
-
-    const listTitleInput = getByTestId(listTitleId);
-    await act(async () => { await userEvent.type(listTitleInput, listTitleText); });
+    await userEvent.click(await findByTestId(openListFormBtnId));
+    await userEvent.type(getByTestId(listTitleId), listTitleText);
 
     const createBtn = getByTestId(createBtnId);
-    await act(async () => { await userEvent.click(createBtn); });
-
+    await userEvent.click(createBtn);
     await waitForElementToBeRemoved(createBtn);
 
     const lists = server.schema.all('list');
@@ -96,14 +100,14 @@ describe('lists CRUD testing', () => {
     expect(listTitleElem).not.toBeNull();
   });
 
-  it('should add new list by list form', async () => {
+  it('shouldn\'t add new list because title is empty', async () => {
     server.create('table');
 
     await renderTestApp();
     const { getByTestId, findByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     await userEvent.click(await findByTestId(ListCreatorExpander_TestId));
     await userEvent.click(getByTestId(CreateListForm_CreateBtn_TestId));
@@ -119,20 +123,23 @@ describe('lists CRUD testing', () => {
   });
 
   it('should delete one list delete option button', async () => {
-    server.create('table');
-    server.create('list');
+    const table = server.create('table');
+    const list = server.create('list');
+
+    list.tableId = table.id;
+    list.save();
 
     await renderTestApp();
-    const { getByTestId, findByTestId, queryByTestId } = app;
+    const { getByTestId, queryByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    const openOptionsBtn = await findByTestId(ListOptionsOpenBtn_TestId);
-    await act(() => userEvent.click(openOptionsBtn));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    const deleteBtn = await findByTestId(ListOptionsDeleteBtn_TestId);
-    await act(() => userEvent.click(deleteBtn));
+    await userEvent.click(getByTestId(ListOptionsOpenBtn_TestId));
+    await userEvent.click(getByTestId(ListOptionsDeleteBtn_TestId));
 
     let listElem = queryByTestId(List_TestId);
     if (listElem) {
@@ -146,14 +153,20 @@ describe('lists CRUD testing', () => {
   });
 
   it('should show new list title if it change by entering on list title clicking form', async () => {
-    server.create('table');
-    server.create('list');
+    const table = server.create('table');
+    const list = server.create('list');
+
+    list.tableId = table.id;
+    list.save();
 
     await renderTestApp();
     const { getByTestId, findByTestId, findByText } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
+
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     await waitFor(() => findByTestId(ListTitleOpenEditorBtn_TestId));
     const openBtn = getByTestId(ListTitleOpenEditorBtn_TestId);
@@ -177,15 +190,22 @@ describe('lists CRUD testing', () => {
   });
 
   it('should doesn\' update list title if it\'s invalid (empty).', async () => {
-    server.create('table');
+    const table = server.create('table');
     const list = server.create('list');
+
+    list.tableId = table.id;
+    list.save();
+
     const oldTitle = list.title;
 
     await renderTestApp();
     const { getByTestId, findByTestId } = app;
 
-    await waitFor(() => getByTestId(testId_TablePlaceholder_Spinner));
-    await waitForElementToBeRemoved(getByTestId(testId_TablePlaceholder_Spinner));
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
+
+    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
+    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     await waitFor(() => findByTestId(List_TestId));
     const openBtn = await findByTestId(ListTitleOpenEditorBtn_TestId);

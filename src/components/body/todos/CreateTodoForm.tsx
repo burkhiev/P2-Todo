@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useAppDispatch } from '../../../hooks/reduxHooks';
+import { useAppSelector } from '../../../hooks/reduxHooks';
 
 import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoListId } from '../../../models/ITodoList';
-import { addTodo } from '../../../store/todo/todoSlice';
+import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
+import { selectListById } from '../../../store/api/listSlice';
+import { useCreateTodo } from '../../../store/api/todoSlice';
 import CreateBtns from '../shared/buttons/CreateBtns';
 import FieldEditor from '../shared/editors/FieldEditor';
 
@@ -14,18 +16,22 @@ export const CreateTodoForm_CloseBtn_TestId = 'CreateTodoForm_CloseBtn';
 
 interface ICreateTodoFormProps {
   listId: TodoListId,
-  onClose?: () => void
+  onClose: () => void
 }
 
 export default function CreateTodoForm(props: ICreateTodoFormProps) {
-  const { listId, onClose = () => {} } = props;
+  const { listId, onClose } = props;
+  const list = useAppSelector((state) => selectListById(state, listId));
 
-  const dispatch = useAppDispatch();
+  if (!list) {
+    throw new InvalidArgumentError('Invalid list ID received.');
+  }
 
   const [title, setTitle] = useState('');
   const [isTitleValid, setIsTitleValid] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
   const [validateTitle] = useTodoValidators();
+  const [createTodo] = useCreateTodo();
 
   function onTitleChange(value: string) {
     setTitle(value);
@@ -35,8 +41,13 @@ export default function CreateTodoForm(props: ICreateTodoFormProps) {
   function onAddTodo() {
     setIsValidated(true);
 
-    if (isTitleValid) {
-      dispatch(addTodo({ listId, title }));
+    if (isTitleValid && list) {
+      createTodo({
+        title,
+        addedAt: '',
+        listId: list.id,
+        position: -1,
+      });
       onClose();
     }
   }

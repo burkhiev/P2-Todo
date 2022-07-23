@@ -7,9 +7,9 @@ import { TodoTableId } from '../../../models/ITodoTable';
 import { selectTableById } from '../../../store/api/tableSlice';
 import SidebarEditTableTitleForm from './SidebarEditTableTitleForm';
 
-export const testId_SidebarTableTitle = 'SidebarTableTitle';
-export const testId_SidebarTableTitle_Name = 'SidebarTableTitle_Name';
-export const testId_SidebarTableTitle_OpenEditorBtn = 'SidebarTableTitle_OpenEditor';
+export const SidebarTableTitle_TestId = 'SidebarTableTitle';
+export const SidebarTableTitle_Name_TestId = 'SidebarTableTitle_Name';
+export const SidebarTableTitle_OpenEditorBtn_TestId = 'SidebarTableTitle_OpenEditor';
 
 interface ISidebarTableTitleProps {
   tableId?: TodoTableId
@@ -53,12 +53,12 @@ export default function SidebarTableTitle(props: ISidebarTableTitleProps) {
         onClick={onOpenAction}
         className="d-flex w-100 btn"
         disabled={disableEditor}
-        data-testid={testId_SidebarTableTitle_OpenEditorBtn}
+        data-testid={SidebarTableTitle_OpenEditorBtn_TestId}
       >
         <div className="w-100">
           <h2
             className="fs-5 text-truncate"
-            data-testid={testId_SidebarTableTitle_Name}
+            data-testid={SidebarTableTitle_Name_TestId}
           >
             {table?.name}
           </h2>
@@ -73,7 +73,7 @@ export default function SidebarTableTitle(props: ISidebarTableTitleProps) {
   return (
     <div
       className="d-flex align-items-center m-3"
-      data-testid={testId_SidebarTableTitle}
+      data-testid={SidebarTableTitle_TestId}
     >
       <span className="bi bi-table me-2" />
       <div className={styles.sidebar_table_name_container}>
