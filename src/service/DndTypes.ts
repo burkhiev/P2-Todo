@@ -1,6 +1,6 @@
 const DndTypes = {
-  TODO: 'DND_TODO',
-  LIST: 'DND_LIST',
+  todo: 'DND_TODO',
+  list: 'DND_LIST',
 };
 
 export default DndTypes;

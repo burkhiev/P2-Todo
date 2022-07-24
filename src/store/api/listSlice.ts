@@ -1,10 +1,12 @@
 import { createEntityAdapter, createSelector, EntityState } from '@reduxjs/toolkit';
+import IMoveListPayload from '../../models/IMoveListPayload';
 
 import { ITodoList, TodoListId } from '../../models/ITodoList';
 import { TodoTableId } from '../../models/ITodoTable';
 import ITodoListResource from '../../models/json-api-models/ITodoListResource';
 import InvalidDataError from '../../service/errors/InvalidDataError';
 import { RootState } from '../store';
+import { getListNewPosition } from './apiHelpers';
 import apiSlice, {
   ALL_LISTS_TAG_ID,
   LIST_TAG_TYPE,
@@ -40,20 +42,6 @@ const listSlice = apiSlice.injectEndpoints({
 
         return listAdapter.setAll(initialApiState, lists);
       },
-
-      // onQueryStarted: async (_, api) => {
-      //   const { dispatch, queryFulfilled } = api;
-
-      //   try {
-      //     const response = await queryFulfilled;
-      //     dispatch(
-      //       listSlice.util.updateQueryData('getLists', undefined, draft =>
-      //         listAdapter.setAll(initialApiState, response.data))
-      //     )
-      //   } catch (error) {
-
-      //   }
-      // },
 
       providesTags(result) {
         const listsIds = result?.ids;
@@ -159,42 +147,38 @@ const listSlice = apiSlice.injectEndpoints({
       },
     }),
 
-    moveList: builder.mutation<ITodoList[], { data: ITodoListResource[] }>({
+    moveList: builder.mutation<ITodoList[], IMoveListPayload>({
       query: (args) => ({
         url: 'move-lists',
         method: 'PUT',
-        body: { args },
+        body: { data: args },
       }),
 
       async onQueryStarted(args, api) {
-        const { data } = args;
+        const { listId } = args;
         const { dispatch, getState, queryFulfilled } = api;
-
         const getRootState = getState as () => RootState;
 
+        // eslint-disable-next-line no-use-before-define
+        const lists = selectAllLists(getRootState());
+        const newPos = getListNewPosition(lists, args);
+
+        if (!newPos) {
+          return;
+        }
+
         const moveResult = dispatch(
-          listSlice.util.updateQueryData('getLists', undefined, (draft) => {
-            // eslint-disable-next-line no-use-before-define
-            const lists = selectAllLists(getRootState());
-            const listsForUpdate: ITodoList[] = [];
-
-            lists.forEach((list) => {
-              const response = data.find((res) => res.id === list.id);
-
-              if (response && response.attributes) {
-                listsForUpdate.push({
-                  ...list,
-                  position: response.attributes.position,
-                });
-              }
-            });
-
-            listAdapter.upsertMany(draft, listsForUpdate);
-          }),
+          listSlice.util.updateQueryData('getLists', undefined, (draft) =>
+            listAdapter.updateOne(draft, {
+              id: listId,
+              changes: { position: newPos },
+            })),
         );
 
         try {
-          await queryFulfilled;
+          const response = await queryFulfilled;
+          dispatch(listSlice.util.updateQueryData('getLists', undefined, (draft) =>
+            listAdapter.upsertMany(draft, response.data)));
         } catch (error) {
           moveResult.undo();
         }

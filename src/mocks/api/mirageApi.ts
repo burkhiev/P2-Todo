@@ -19,8 +19,10 @@ import { ITodo } from '../../models/ITodo';
 import ITodoResource from '../../models/json-api-models/ITodoResource';
 import IMoveTodoResource from '../../models/json-api-models/IMoveTodoResource';
 import MathService from '../../service/MathService';
-import { IMoveTodoPayload } from '../../store/api/todoSlice';
-import { getNewTodoPosition } from '../../store/api/apiHelpers';
+import { getListNewPosition as getNewListPosition, getNewTodoPosition } from '../../store/api/apiHelpers';
+import IMoveTodoPayload from '../../models/IMoveTodoPayload';
+import IMoveListPayload from '../../models/IMoveListPayload';
+import OutOfRangeError from '../../service/errors/OutOfRangeError';
 
 export const MIRAGE_URL = 'http://127.0.0.1:5500';
 export const MIRAGE_NAMESPACE = 'api';
@@ -28,9 +30,9 @@ export const MIRAGE_DELAY = 200;
 
 const MAX_TABLE_IDS_COUNT = 50;
 const MAX_LIST_IDS_COUNT = 100;
-const TABLES_COUNT = 3;
-const LISTS_COUNT = 10;
-const TODOS_COUNT = 15;
+const TABLES_COUNT = 4;
+const LISTS_COUNT = 12;
+const TODOS_COUNT = 30;
 const tableIds: TodoTableId[] = [];
 const listIds: TodoListId[] = [];
 
@@ -160,46 +162,72 @@ function configureListsEndpoints(server: MockServer) {
   });
 
   server.put('move-lists', (schema, request) => {
-    const { data }: { data: ITodoListResource[] } = JSON.parse(request.requestBody);
+    const { data }: { data: IMoveListPayload } = JSON.parse(request.requestBody);
+    const {
+      tableId, srcIndex, destIndex,
+    } = data;
 
-    const results: ITodoListResource[] = [];
-    const updatedLists: any[] = [];
+    const table = schema.find('table', tableId);
 
-    for (let i = 0; i < data.length; i += 1) {
-      const { id, attributes } = data[i];
+    if (!table) {
+      throw new InvalidDataError('Invalid table ID.');
+    }
 
-      const list = schema.find('list', id);
+    const lists = schema.all('list')
+      .filter((l) => l.tableId === tableId)
+      .sort((a, b) => a.position - b.position)
+      .models;
 
-      if (!list) {
-        throw new InvalidDataError('[list.put] - Invalid list id is received.');
-      }
+    const list = lists[srcIndex];
 
-      const invalidTableId = !attributes?.tableId
-        || !tableIds.some((tableId) => tableId === attributes.tableId);
-      if (invalidTableId) {
-        throw new InvalidDataError('[list.put] - Invalid table id is received.');
-      }
+    if (list.id !== lists[srcIndex].id) {
+      throw new InvalidDataError('Invalid list ID.');
+    }
 
-      if (!attributes?.title) {
-        throw new InvalidDataError('[list.put] - Invalid list title is received.');
-      }
+    if (
+      srcIndex < 0 || lists.length <= srcIndex
+      || destIndex < 0 || lists.length <= destIndex
+    ) {
+      throw new OutOfRangeError('Invalid "srcIndex" or "destIndex".');
+    }
 
-      list.update({ id, ...attributes });
-      updatedLists.push(list);
+    const newPos = getNewListPosition(lists, data);
 
-      results.push({
+    if (!newPos) {
+      return { data: [] };
+    }
+
+    if (MathService.countOfFractionalPartNumbers(newPos) <= MAX_POSITION_FRACTION_DIGITS_NUMBER) {
+      list.update('position', newPos);
+      const { id, attrs } = list;
+
+      const resource: ITodoListResource = {
         type: 'list',
         id,
-        attributes,
+        attributes: attrs,
+      };
+
+      return { data: [resource] };
+    }
+
+    const resources: ITodoListResource[] = [];
+    list.update('position', newPos);
+    lists.sort((a, b) => a.position - b.position);
+
+    for (let i = 0; i < lists.length; i += 1) {
+      const curList = lists[i];
+      curList.update('position', (i + 1) * POSITION_STEP);
+
+      const { id, attrs } = curList;
+
+      resources.push({
+        type: 'list',
+        id,
+        attributes: attrs,
       });
     }
 
-    for (let i = 0; i < updatedLists.length; i += 1) {
-      updatedLists[i].save();
-    }
-
-    // let result: AnyResponse = { id: nanoid() };
-    return { data: results };
+    return { data: resources };
   });
 
   server.delete('list', (schema, request) => {

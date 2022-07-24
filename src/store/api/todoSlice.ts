@@ -16,14 +16,7 @@ import { selectListById } from './listSlice';
 import { getNewTodoPosition } from './apiHelpers';
 import InvalidDataError from '../../service/errors/InvalidDataError';
 import { NEW_TODO_ID, POSITION_STEP } from '../../service/Consts';
-
-export interface IMoveTodoPayload {
-  todoId: TodoId,
-  srcListId: TodoListId,
-  srcIndex: number,
-  destListId: TodoListId,
-  destIndex: number
-}
+import IMoveTodoPayload from '../../models/IMoveTodoPayload';
 
 const todoAdapter = createEntityAdapter<ITodo>({
   selectId: (todo) => todo.id,

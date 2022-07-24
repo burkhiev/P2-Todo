@@ -1,0 +1,28 @@
+.table_container {
+  min-height: 100%;
+  height: auto;
+  width: 100%;
+  min-width: 1600px;
+}
+
+.table_lists {
+  display: flex;
+  margin: 20px;
+  height: 100%;
+  min-height: 100%;
+}
+
+.table_name {
+  position: sticky;
+  top: 60px;
+  height: 60px;
+  padding-inline-start: 20px;
+  font-size: large;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 60px;
+  text-overflow: ellipsis;
+  background-color: rgb(253, 253, 253);
+  border: 1px solid rgb(221, 221, 221);
+  border-top: 0;
+  z-index: 1;
+}

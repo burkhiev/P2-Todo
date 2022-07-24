@@ -5,7 +5,7 @@ import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../models/ITodoTable';
 import { selectTableById, useUpdateTable } from '../../../store/api/tableSlice';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
-import FieldEditor from '../../body/shared/editors/FieldEditor';
+import FieldEditor from '../../main/shared/editors/FieldEditor';
 
 const INVALID_TABLE_ID_ERR_MSG = 'Invalid argument error.'
   + ' Non-existed "tableId" received.';

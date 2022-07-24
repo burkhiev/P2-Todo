@@ -3,24 +3,25 @@ import {
   RenderResult,
   waitFor,
   waitForElementToBeRemoved,
+  getByTestId as g_getByTestId,
 } from '@testing-library/react';
 
 import userEvent from '@testing-library/user-event';
 import { nanoid } from '@reduxjs/toolkit';
 import renderWithProviders from '../utils/test-utils';
-import Main from '../components/body/Main';
-import { TablePlaceholder_Spinner_TestId } from '../components/body/table/TablePlaceholder/TablePlaceholder';
-import { ListCreatorExpander_TestId } from '../components/body/lists/ListCreator/ListCreatorExpander';
-import { List_TestId } from '../components/body/lists/List/List';
+import Main from '../components/main/Main';
+import { TablePlaceholder_Spinner_TestId } from '../components/main/table/TablePlaceholder/TablePlaceholder';
+import { ListCreatorExpander_TestId } from '../components/main/lists/ListCreator/ListCreatorExpander';
+import { List_TestId } from '../components/main/lists/List/List';
 import makeServer from '../mocks/api/mirageApi';
-import { ListOptionsDeleteBtn_TestId, ListOptionsOpenBtn_TestId } from '../components/body/lists/ListOptions/ListOptions';
-import { ListTitleOpenEditorBtn_TestId } from '../components/body/lists/ListTitle/ListTitle';
-import { ListTitleEditor_TestId } from '../components/body/lists/ListTitle/ListTitleEditor';
+import { ListOptionsDeleteBtn_TestId, ListOptionsOpenBtn_TestId } from '../components/main/lists/ListOptions/ListOptions';
+import { ListTitleOpenEditorBtn_TestId, ListTitle_Title_TestId } from '../components/main/lists/ListTitle/ListTitle';
+import { ListTitleEditor_Input_TestId, ListTitleEditor_TestId } from '../components/main/lists/ListTitle/ListTitleEditor';
 import {
   CreateListForm_CreateBtn_TestId,
-  CreateListForm_ListTitle_TestId,
+  CreateListForm_TitleInput_TestId,
   CreateListForm_TestId,
-} from '../components/body/lists/ListCreator/CreateListForm';
+} from '../components/main/lists/ListCreator/CreateListForm';
 
 let server: ReturnType<typeof makeServer>;
 let app: RenderResult;
@@ -44,25 +45,23 @@ describe('lists CRUD testing', () => {
     const lists = server.createList('list', 4);
 
     for (let i = 0; i < lists.length; i += 1) {
-      lists[i].tableId = table.id;
-      lists[i].save();
+      lists[i].update('tableId', table.id);
     }
 
     await renderTestApp();
-    const { getByTestId, getAllByTestId, getByText } = app;
+    const { getByTestId, findAllByTestId } = app;
 
     await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    if (getByTestId(TablePlaceholder_Spinner_TestId)) {
-      await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
-      await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
-    }
+    const listComponents = await findAllByTestId(List_TestId);
+    expect(listComponents).toHaveLength(4);
 
-    expect(server.schema.all('list').length).toBe(4);
-    expect(getAllByTestId(List_TestId).length).toBe(4);
-
-    lists.forEach((list) => expect(getByText(list.title)).not.toBeNull());
+    lists.sort((a, b) => a.position - b.position);
+    lists.forEach((list, index) => {
+      expect(g_getByTestId(listComponents[index], ListTitle_Title_TestId))
+        .toHaveTextContent(list.title);
+    });
   });
 
   it('should add new list by list form', async () => {
@@ -77,7 +76,7 @@ describe('lists CRUD testing', () => {
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
     const openListFormBtnId = ListCreatorExpander_TestId;
-    const listTitleId = CreateListForm_ListTitle_TestId;
+    const listTitleId = CreateListForm_TitleInput_TestId;
     const createBtnId = CreateListForm_CreateBtn_TestId;
     const listTitleText = 'SOME_LIST_TITLE';
 
@@ -130,15 +129,12 @@ describe('lists CRUD testing', () => {
     list.save();
 
     await renderTestApp();
-    const { getByTestId, queryByTestId } = app;
+    const { getByTestId, findByTestId, queryByTestId } = app;
 
     await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
-    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
-
-    await userEvent.click(getByTestId(ListOptionsOpenBtn_TestId));
+    await userEvent.click(await findByTestId(ListOptionsOpenBtn_TestId));
     await userEvent.click(getByTestId(ListOptionsDeleteBtn_TestId));
 
     let listElem = queryByTestId(List_TestId);
@@ -165,15 +161,12 @@ describe('lists CRUD testing', () => {
     await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
-    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
-
     await waitFor(() => findByTestId(ListTitleOpenEditorBtn_TestId));
     const openBtn = getByTestId(ListTitleOpenEditorBtn_TestId);
     await userEvent.click(openBtn);
 
     const newTitle = nanoid();
-    const titleInput = getByTestId(ListTitleEditor_TestId);
+    const titleInput = getByTestId(ListTitleEditor_Input_TestId);
 
     await userEvent.clear(titleInput);
     await userEvent.type(titleInput, newTitle);
@@ -189,7 +182,7 @@ describe('lists CRUD testing', () => {
     expect(await findByText(newTitle)).not.toBeNull();
   });
 
-  it('should doesn\' update list title if it\'s invalid (empty).', async () => {
+  it('should doesn\'t update list title if it\'s invalid (empty).', async () => {
     const table = server.create('table');
     const list = server.create('list');
 
@@ -204,19 +197,14 @@ describe('lists CRUD testing', () => {
     await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
-    await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
-
     await waitFor(() => findByTestId(List_TestId));
-    const openBtn = await findByTestId(ListTitleOpenEditorBtn_TestId);
+    const openBtn = getByTestId(ListTitleOpenEditorBtn_TestId);
     await userEvent.click(openBtn);
 
-    const titleInput = await findByTestId(ListTitleEditor_TestId);
-
-    await userEvent.clear(titleInput);
+    await userEvent.clear(getByTestId(ListTitleEditor_Input_TestId));
     await userEvent.keyboard('{enter}');
 
-    const listElem = getByTestId(List_TestId);
+    const listElem = getByTestId(ListTitleEditor_TestId);
     const invalidInput = listElem.querySelector('.is-invalid');
     expect(invalidInput).not.toBeNull();
 

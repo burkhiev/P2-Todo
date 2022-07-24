@@ -1,8 +1,10 @@
+import IMoveListPayload from '../../models/IMoveListPayload';
+import IMoveTodoPayload from '../../models/IMoveTodoPayload';
 import { ITodo } from '../../models/ITodo';
+import { ITodoList } from '../../models/ITodoList';
 import { POSITION_STEP } from '../../service/Consts';
 import InvalidArgumentError from '../../service/errors/InvalidArgumentError';
 import OutOfRangeError from '../../service/errors/OutOfRangeError';
-import { IMoveTodoPayload } from './todoSlice';
 
 /**
  * Вычисляет новую позицию todo при смене позиции.
@@ -67,6 +69,58 @@ export function getNewTodoPosition(initTodos: ITodo[], moveInfo: IMoveTodoPayloa
   } else {
     prevPos = todos[destIndex - 1].position;
     nextPos = todos[destIndex].position;
+    newPos = (prevPos + nextPos) / 2;
+  }
+
+  return newPos;
+}
+
+export function getListNewPosition(initLists: ITodoList[], moveInfo: IMoveListPayload) {
+  const {
+    tableId, listId, srcIndex, destIndex,
+  } = moveInfo;
+
+  const lists = initLists
+    .filter((l) => l.tableId === tableId)
+    .sort((a, b) => a.position - b.position);
+
+  if (lists.length === 0) {
+    throw new InvalidArgumentError('Table with specified ID has no lists.');
+  }
+
+  if (!lists.find((l) => l.id === listId)) {
+    throw new InvalidArgumentError('Invalid list ID or table ID received.');
+  }
+
+  if (
+    srcIndex < 0 || lists.length <= srcIndex
+    || destIndex < 0 || lists.length <= destIndex
+  ) {
+    throw new OutOfRangeError('"srcIndex" or "destIndex" is our of range.');
+  }
+
+  if (srcIndex === destIndex) {
+    return undefined;
+  }
+
+  let newPos: number;
+
+  if (destIndex === (lists.length - 1)) {
+    newPos = lists[destIndex].position + POSITION_STEP;
+  } else if (destIndex === 0) {
+    newPos = lists[0].position / 2;
+  } else {
+    let prevPos: number;
+    let nextPos: number;
+
+    if (destIndex < srcIndex) {
+      prevPos = lists[destIndex - 1].position;
+      nextPos = lists[destIndex].position;
+    } else {
+      prevPos = lists[destIndex].position;
+      nextPos = lists[destIndex + 1].position;
+    }
+
     newPos = (prevPos + nextPos) / 2;
   }
 

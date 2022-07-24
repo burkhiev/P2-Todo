@@ -20,18 +20,18 @@ import {
 import {
   TablePlaceholder_Spinner_TestId,
   TablePlaceholder_TestId,
-} from '../components/body/table/TablePlaceholder/TablePlaceholder';
+} from '../components/main/table/TablePlaceholder/TablePlaceholder';
 import {
   SidebarEditTableTitleForm_Field_TestId,
   SidebarEditTableTitleForm_TestId,
 } from '../components/sidebar/SidebarTableTitle/SidebarEditTableTitleForm';
-import { testId_SidebarOpenCreateForm_OpenBtn } from '../components/sidebar/SidebarTableCreatorExpander';
+import { SidebarOpenCreateForm_OpenBtn_TestId } from '../components/sidebar/SidebarTableCreatorExpander';
 import { SidebarTableTitle_Name_TestId } from '../components/sidebar/SidebarTableTitle/SidebarTableTitle';
 import { testId_SidebarList } from '../components/sidebar/Sidebar/Sidebar';
-import { testId_Table_Header } from '../components/body/table/Table';
+import { Table_Header_TestId } from '../components/main/table/Table';
 import createServer from '../mocks/api/mirageApi';
 import renderWithProviders from '../utils/test-utils';
-import Main from '../components/body/Main';
+import Main from '../components/main/Main';
 
 let server: ReturnType<typeof createServer>;
 let app: RenderResult;
@@ -79,7 +79,7 @@ describe('table crud testing', () => {
       expect(tableListElem).toHaveTextContent(table.name);
     });
 
-    expect(await findByTestId(testId_Table_Header)).toBeInTheDocument();
+    expect(await findByTestId(Table_Header_TestId)).toBeInTheDocument();
   });
 
   it('adds a new table when submit name by sidebar creating form', async () => {
@@ -89,18 +89,10 @@ describe('table crud testing', () => {
     await waitFor(() => getByTestId(TablePlaceholder_Spinner_TestId));
     await waitForElementToBeRemoved(getByTestId(TablePlaceholder_Spinner_TestId));
 
-    const createTableBtnId = testId_SidebarOpenCreateForm_OpenBtn;
-    const tableInputId = SidebarCreateTableForm_NameField_TestId;
-    const addBtnId = SidebarCreateTableForm_AcceptBtn_TestId;
-    const tableItemId = SidebarTableItem_TestId;
-
     const newTableName = 'TABLE_NAME';
-
-    const createTableBtn = getByTestId(createTableBtnId);
-    await userEvent.click(createTableBtn);
-    const tableInput = await findByTestId(tableInputId);
-    await userEvent.type(tableInput, newTableName);
-    await userEvent.click(getByTestId(addBtnId));
+    await userEvent.click(getByTestId(SidebarOpenCreateForm_OpenBtn_TestId));
+    await userEvent.type(getByTestId(SidebarCreateTableForm_NameField_TestId), newTableName);
+    await userEvent.click(getByTestId(SidebarCreateTableForm_AcceptBtn_TestId));
 
     await findByTestId(SidebarCreateTableForm_TestId);
     await waitForElementToBeRemoved(() => getByTestId(SidebarCreateTableForm_TestId));
@@ -108,7 +100,7 @@ describe('table crud testing', () => {
     const tables = server.schema.all('table');
     expect(tables.length).toEqual(1);
 
-    const tableEl = getByTestId(tableItemId);
+    const tableEl = getByTestId(SidebarTableItem_TestId);
     const table = tables.models[0];
     expect(tableEl.id).toEqual(table.id);
   });

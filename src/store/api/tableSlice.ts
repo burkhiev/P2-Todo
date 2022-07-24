@@ -75,13 +75,6 @@ const tableSlice = apiSlice.injectEndpoints({
           // пусто
         }
       },
-
-      invalidatesTags(_, error) {
-        if (error) {
-          return [];
-        }
-        return [{ type: TABLE_TAG_TYPE, id: TABLE_TAG_ID }];
-      },
     }),
 
     updateTable: builder.mutation<ITodoTable, ITodoTable>({

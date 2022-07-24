@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import useTodoValidators from '../../../hooks/useTodoValidators';
 import { TodoTableId } from '../../../models/ITodoTable';
 import { useCreateTable } from '../../../store/api/tableSlice';
-import CreateBtns from '../../body/shared/buttons/CreateBtns';
-import FieldEditor from '../../body/shared/editors/FieldEditor';
+import CreateBtns from '../../main/shared/buttons/CreateBtns';
+import FieldEditor from '../../main/shared/editors/FieldEditor';
 
 export const SidebarCreateTableForm_TestId = 'SidebarCreateTableForm';
 export const SidebarCreateTableForm_NameField_TestId = 'SidebarCreateTableForm_NameField';
