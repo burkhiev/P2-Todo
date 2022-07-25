@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "set NODE_ENV=production&& webpack --progress --color",
-    "start": "set NODE_ENV=development&& webpack --progress --color",
+    "start": "set NODE_ENV=development&& tcm src&& webpack --progress --color",
     "test": "jest ./src",
     "lint": "eslint ./src/**/*.* --color",
     "lint:fix": "eslint ./src/**/*.* --color --fix",
