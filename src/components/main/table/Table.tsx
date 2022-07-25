@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 
-import styles from './Table.css';
+import styles from './table1.css';
 
 import { TodoTableId } from '../../../models/ITodoTable';
 import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';

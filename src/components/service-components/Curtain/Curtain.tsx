@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './Curtain.css';
+import styles from './curtain1.css';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { selectCurtainState } from '../../../store/style/styleSlice';

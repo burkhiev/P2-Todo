@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styles from './Sidebar.css';
+import styles from './sidebar1.css';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';

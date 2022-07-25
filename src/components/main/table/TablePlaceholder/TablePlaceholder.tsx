@@ -1,6 +1,6 @@
 import React from 'react';
 
-import styles from './TablePlaceholder.css';
+import styles from './tablePlaceholder1.css';
 
 export const TablePlaceholder_TestId = 'TablePlaceholder';
 export const TablePlaceholder_Spinner_TestId = 'TablePlaceholder_Spinner';

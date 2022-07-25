@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import styles from './PageHeader.css';
+import styles from './pageHeader1.css';
 
 export default function PageHeader() {
   return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Draggable } from 'react-beautiful-dnd';
-import styles from '../List/List.css';
+import styles from '../List/list1.css';
 
 import { TodoTableId } from '../../../../models/ITodoTable';
 import OpenCreateFormBtn from '../../shared/buttons/OpenCreateFormBtn';

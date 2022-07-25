@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
-import styles from './TodoCard.css';
+import styles from './todoCard1.css';
 
 import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
 import EditTodoForm from '../EditTodoForm/EditTodoForm';
