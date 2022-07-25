@@ -4,6 +4,9 @@ const localCssIdentName = process.env.NODE_ENV !== 'production'
   ? "[path][name]__[local]--[hash:base64:5]"
   : "[hash:base64]"
 
+// const mustWatch = process.env.NODE_ENV !== 'production';
+const mustWatch = false;
+
 module.exports = {
   mode: process.env.NODE_ENV,
 
@@ -17,7 +20,7 @@ module.exports = {
     ]
   },
 
-  watch: true,
+  watch: mustWatch,
   watchOptions: {
     ignored: [
       './node_modules/',
