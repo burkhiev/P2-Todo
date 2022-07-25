@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import styles from './Sidebar.css';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
@@ -71,14 +72,11 @@ export default function Sidebar(props: ISidebarProps) {
   ));
 
   return (
-    <div className="p-3">
+    <div className={styles.sidebar}>
       <SidebarTableTitle tableId={tableId} />
       <hr />
       <div>
-        <div
-          className="mb-3"
-          data-testid={testId_SidebarList}
-        >
+        <div className="mb-3" data-testid={testId_SidebarList}>
           {renderedTableItems}
         </div>
         <div className="mx-2">

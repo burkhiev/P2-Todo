@@ -57,10 +57,10 @@ export default function List(props: IListProps) {
                   {renderedTodos}
                 </div>
                 {dropProvider.placeholder}
+                <CreateTodoExpander listId={listId} />
               </div>
             )}
           </Droppable>
-          <CreateTodoExpander listId={listId} />
         </div>
       )}
     </Draggable>

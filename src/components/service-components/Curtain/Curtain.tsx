@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './Curtain.css';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectCurtainState } from '../../../store/style/curtainSlice';
+import { selectCurtainState } from '../../../store/style/styleSlice';
 
 export const Curtain_TestId = 'Curtain';
 

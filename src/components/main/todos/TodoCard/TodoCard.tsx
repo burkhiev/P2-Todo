@@ -6,7 +6,7 @@ import styles from './TodoCard.css';
 
 import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
 import EditTodoForm from '../EditTodoForm/EditTodoForm';
-import { curtainOff, curtainOn } from '../../../../store/style/curtainSlice';
+import { curtainOff, curtainOn } from '../../../../store/style/styleSlice';
 import { TodoId } from '../../../../models/ITodo';
 import { selectTodoById } from '../../../../store/api/todoSlice';
 

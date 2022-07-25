@@ -30,9 +30,9 @@ export const MIRAGE_DELAY = 200;
 
 const MAX_TABLE_IDS_COUNT = 50;
 const MAX_LIST_IDS_COUNT = 100;
-const TABLES_COUNT = 4;
-const LISTS_COUNT = 12;
-const TODOS_COUNT = 30;
+const TABLES_COUNT = 5;
+const LISTS_COUNT = 30;
+const TODOS_COUNT = 60;
 const tableIds: TodoTableId[] = [];
 const listIds: TodoListId[] = [];
 
@@ -293,6 +293,7 @@ function configureTodosEndpoints(server: MockServer) {
     const { id, attributes: attrs } = data;
 
     const entity = schema.find('todo', id);
+    const lists = schema.all('list').models;
 
     if (!entity) {
       throw new InvalidDataError('[put/todo]: There are no todo for received id.');
@@ -302,7 +303,7 @@ function configureTodosEndpoints(server: MockServer) {
       throw new InvalidDataError('[put/todo]: There are no attributes for todo.');
     }
 
-    if (!attrs.listId || !listIds.some((listId) => listId === attrs.listId)) {
+    if (!attrs.listId || !lists.find((l) => l.id === attrs.listId)) {
       throw new InvalidDataError('[put/todo]: Invalid todo listId received.');
     }
 

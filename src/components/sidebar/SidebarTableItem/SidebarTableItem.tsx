@@ -88,8 +88,9 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
   }
 
   const margin = itsFirst ? '' : 'mt-1';
-  const selected = selectedTableId === tableId ? 'bg-primary' : '';
-  const selectedText = selectedTableId === tableId ? 'text-white' : '';
+  const selected = selectedTableId === tableId ? 'bg-light' : '';
+  const selectedText = selectedTableId === tableId ? '' : 'text-white';
+  const selectedOptionBtnColor = selectedTableId === tableId ? '' : 'text-white';
   const placeholder = (isLoading) ? 'placeholder' : '';
   const bgColor = (isLoading) ? 'bg-danger' : '';
   const textColor = (isLoading) ? 'text-white' : '';
@@ -100,7 +101,6 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
       className={`
         d-flex
         px-3
-        rounded
         placeholder-glow
         ${margin} 
         ${selected} 
@@ -129,6 +129,7 @@ export default function SidebarTableItem(props: ISidebarTableItemProps) {
           type="button"
           onClick={onOpenDropdownMenu}
           className={`
+            ${selectedOptionBtnColor}
             ${styles.sidebar_table_item_btn} 
             ${styles.sidebar_table_item_options}
           `}

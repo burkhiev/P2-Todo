@@ -36,6 +36,7 @@ export default function SidebarTableCreatorExpander(props: ISidebarTableCreatorE
           text="Добавить таблицу"
           onOpen={onOpen}
           testId={SidebarOpenCreateForm_OpenBtn_TestId}
+          openFormBtnStyle="btn-outline-light"
         />
       )}
     </>

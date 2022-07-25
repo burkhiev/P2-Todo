@@ -1,7 +1,6 @@
 declare const styles: {
   readonly 'main': string;
-  readonly 'main_sidebar_sticky': string;
-  readonly 'main_sidebar_sticky_placeholder': string;
-  readonly 'main_table_container': string;
+  readonly 'main_bg_image0': string;
+  readonly 'main_bg_image1': string;
 };
 export = styles;

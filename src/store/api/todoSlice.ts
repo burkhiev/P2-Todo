@@ -12,11 +12,12 @@ import ITodoResource from '../../models/json-api-models/ITodoResource';
 import InvalidArgumentError from '../../service/errors/InvalidArgumentError';
 import { RootState } from '../store';
 import apiSlice, { ALL_TODOS_TAG_ID, TODO_TAG_TYPE } from './apiSlice';
-import { selectListById } from './listSlice';
+import { selectListById, selectListsByTableId } from './listSlice';
 import { getNewTodoPosition } from './apiHelpers';
 import InvalidDataError from '../../service/errors/InvalidDataError';
 import { NEW_TODO_ID, POSITION_STEP } from '../../service/Consts';
 import IMoveTodoPayload from '../../models/IMoveTodoPayload';
+import { TodoTableId } from '../../models/ITodoTable';
 
 const todoAdapter = createEntityAdapter<ITodo>({
   selectId: (todo) => todo.id,
@@ -335,3 +336,8 @@ export const selectLastTodoPositionInList = (state: RootState, listId: TodoListI
   selectTodosByListId(state, listId)
     .map((todo) => todo.position)
     .reduce((prev, cur) => Math.max(prev, cur), 0);
+
+export const selectTodosByTableId = (state: RootState, tableId: TodoTableId) =>
+  selectListsByTableId(state, tableId)
+    .map((list) => selectTodosByListId(state, list.id))
+    .flat();

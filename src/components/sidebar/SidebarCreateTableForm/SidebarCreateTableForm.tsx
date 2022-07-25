@@ -69,6 +69,7 @@ export default function SidebarCreateTableForm(props: ISidebarCreateTableFormPro
         onClose={onClose}
         actionBtnTestId={SidebarCreateTableForm_AcceptBtn_TestId}
         closeBtnTestId={SidebarCreateTableForm_CloseBtn_TestId}
+        closeBtnStyle="text-white"
       />
     </div>
   );

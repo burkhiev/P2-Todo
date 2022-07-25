@@ -1,21 +1,13 @@
 .main {
-  height: 100%;
+  display: flex;
+  height: calc(100% - 60px);
+  background-size: cover;
 }
 
-.main_sidebar_sticky {
-  position: fixed;
-  top: 25px;
-  height: auto;
-  min-height: 100%;
-  width: 300px;
-  background-color: rgb(247, 247, 247);
-  z-index: 2;
+.main_bg_image0 {
+  background-image: url('../../../static/430d4545-14ca-46ae-b059-94732a8eb9fd.jpg');
 }
 
-.main_sidebar_sticky_placeholder {
-  width: 300px;
-}
-
-.main_table_container {
-  height: 100%;
+.main_bg_image1 {
+  background-image: url('../../../static/6e0f1481-79be-469b-9026-1d18892d117c.jpg');
 }

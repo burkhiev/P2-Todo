@@ -21,8 +21,8 @@ export default function App() {
             <StyleController>
               <PageHeader />
               <Routes>
-                <Route index element={<Main />} />
-                <Route path="/index.html" element={<Navigate to="/" />} />
+                <Route path="/build/" element={<Main />} />
+                <Route path="/build/index.html" element={<Navigate to="/build/" />} />
               </Routes>
             </StyleController>
           </AppProviders>

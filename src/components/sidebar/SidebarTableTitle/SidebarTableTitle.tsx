@@ -57,14 +57,14 @@ export default function SidebarTableTitle(props: ISidebarTableTitleProps) {
       >
         <div className="w-100">
           <h2
-            className="fs-5 text-truncate"
+            className="fs-5 text-truncate text-white"
             data-testid={SidebarTableTitle_Name_TestId}
           >
             {table?.name}
           </h2>
         </div>
         <div className="ms-2">
-          <span className="bi bi-pen text-muted fs-6" />
+          <span className="bi bi-pen text-white fs-6" />
         </div>
       </button>
     );
@@ -72,10 +72,10 @@ export default function SidebarTableTitle(props: ISidebarTableTitleProps) {
 
   return (
     <div
-      className="d-flex align-items-center m-3"
+      className="d-flex align-items-center px-4 pt-3"
       data-testid={SidebarTableTitle_TestId}
     >
-      <span className="bi bi-table me-2" />
+      <span className="bi bi-table me-2 text-white" />
       <div className={styles.sidebar_table_name_container}>
         {content}
       </div>

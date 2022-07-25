@@ -1,5 +1,4 @@
 declare const styles: {
-  readonly 'sidebar_container': string;
-  readonly 'sidebar_tables_list': string;
+  readonly 'sidebar': string;
 };
 export = styles;

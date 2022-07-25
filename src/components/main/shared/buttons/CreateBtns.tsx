@@ -8,7 +8,9 @@ interface ICreateBtnsProps {
   onAccept: () => void,
   onClose: () => void,
   actionBtnTestId: string,
-  closeBtnTestId: string
+  closeBtnTestId: string,
+  addBtnStyle?: string,
+  closeBtnStyle?: string
 }
 
 export default function CreateBtns(props: ICreateBtnsProps) {
@@ -19,6 +21,8 @@ export default function CreateBtns(props: ICreateBtnsProps) {
     acceptBtnText,
     actionBtnTestId,
     closeBtnTestId,
+    addBtnStyle,
+    closeBtnStyle,
   } = props;
 
   function onAction(e: React.MouseEvent<any>) {
@@ -39,7 +43,7 @@ export default function CreateBtns(props: ICreateBtnsProps) {
     <div className="d-flex">
       <button
         type="button"
-        className={`${BtnStyles.accept} ${placeholderCss}`}
+        className={`${BtnStyles.accept} ${addBtnStyle} ${placeholderCss}`}
         onClick={onAction}
         data-testid={actionBtnTestId}
       >
@@ -47,7 +51,7 @@ export default function CreateBtns(props: ICreateBtnsProps) {
       </button>
       <button
         type="button"
-        className={`${BtnStyles.close} ${visible}`}
+        className={`${BtnStyles.close} ${closeBtnStyle} ${visible}`}
         onClick={onClose}
         data-testid={closeBtnTestId}
       >

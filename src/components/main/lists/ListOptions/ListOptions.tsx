@@ -48,14 +48,6 @@ export default function ListOptions(props: IListOptionsProps) {
           >
             Удалить
           </button>
-          <button
-            type="button"
-            className="dropdown-item disabled"
-            disabled
-            tabIndex={-1}
-          >
-            <span className="text-muted">Сортировать</span>
-          </button>
         </div>
       </div>
     </div>

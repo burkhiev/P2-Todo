@@ -4,7 +4,7 @@ import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import styles from './Table.css';
 
 import { TodoTableId } from '../../../models/ITodoTable';
-import { useAppSelector } from '../../../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import ListCreatorExpander from '../lists/ListCreator/ListCreatorExpander';
 import { ITodoList, TodoListId } from '../../../models/ITodoList';
 import { INVALID_TABLE_ID } from '../../../service/Consts';
@@ -15,6 +15,7 @@ import { useGetTodos, useMoveTodo } from '../../../store/api/todoSlice';
 import List from '../lists/List/List';
 import DndTypes from '../../../service/DndTypes';
 import InvalidArgumentError from '../../../service/errors/InvalidArgumentError';
+import { selectImage } from '../../../store/style/styleSlice';
 
 export const Table_Header_TestId = 'Table_Header';
 
@@ -50,6 +51,7 @@ export default function Table(props: ITableProps) {
 
   const lists = useAppSelector((state) => selectListsByTableId(state, table.id));
 
+  const dispatch = useAppDispatch();
   const [moveTodo] = useMoveTodo(undefined);
   const [moveList] = useMoveList(undefined);
 
@@ -75,6 +77,12 @@ export default function Table(props: ITableProps) {
       <List key={list.id} listId={list.id} index={index} />);
   }
 
+  const onImageChange = useCallback(
+    (index: number) =>
+      dispatch(selectImage(index)),
+    [dispatch],
+  );
+
   const onDragEnd = useCallback((result: DropResult) => {
     const { source, destination, draggableId } = result;
 
@@ -83,10 +91,6 @@ export default function Table(props: ITableProps) {
     }
 
     if (!destination) {
-      return;
-    }
-
-    if (source.index < 0 || lists.length <= source.index) {
       return;
     }
 
@@ -115,41 +119,64 @@ export default function Table(props: ITableProps) {
         destIndex: destination.index,
       });
     }
-  }, [isTodosSuccess, isTodosLoading, moveTodo, moveList, lists.length]);
+  }, [isTodosSuccess, isTodosLoading, moveTodo, moveList]);
 
   let content: any;
 
   if (!isListsLoading && table) {
     content = (
-      <>
-        <div className={styles.table_name} data-testid={Table_Header_TestId}>
-          {table.name}
-        </div>
-        <Droppable droppableId={table.id} type={DndTypes.list} direction="horizontal">
-          {(provider) => (
-            <div
-              id={table.id}
-              ref={provider.innerRef}
-              {...provider.droppableProps}
-              className={`${styles.table_lists}`}
-            >
-              {listContent}
-              <ListCreatorExpander key={tableId} tableId={table.id} index={lists.length} />
-              {provider.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </>
+      <Droppable droppableId={table.id} type={DndTypes.list} direction="horizontal">
+        {(provider) => (
+          <div
+            id={table.id}
+            ref={provider.innerRef}
+            {...provider.droppableProps}
+            className={`${styles.table_lists}`}
+          >
+            {listContent}
+            <ListCreatorExpander key={tableId} tableId={table.id} index={lists.length} />
+            {provider.placeholder}
+          </div>
+        )}
+      </Droppable>
     );
   } else {
     content = <TablePlaceholder isLoading={isListsLoading} />;
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className={`bg-white ${styles.table_container}`}>
-        {content}
+    <div className={styles.table_container}>
+      <div className={styles.table_header} data-testid={Table_Header_TestId}>
+        {table.name}
+        <div className="dropstart">
+          <button
+            type="button"
+            className="btn btn-outline-light"
+            data-bs-toggle="dropdown"
+          >
+            change image
+          </button>
+          <div className="dropdown-menu">
+            <button
+              type="button"
+              className={`${styles.table_header_image_option_btn} dropdown-item`}
+              onClick={() => onImageChange(0)}
+            >
+              Steppe
+            </button>
+            <button
+              type="button"
+              className={`${styles.table_header_image_option_btn} dropdown-item`}
+              onClick={() => onImageChange(1)}
+            >
+              Coast
+            </button>
+          </div>
+        </div>
       </div>
-    </DragDropContext>
+      <DragDropContext onDragEnd={onDragEnd}>
+        {content}
+      </DragDropContext>
+    </div>
   );
 }
