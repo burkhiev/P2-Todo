@@ -14,7 +14,7 @@ export const INVALID_LIST_ID: TodoListId = 'INVALID_LIST_ID';
 export const NEW_TODO_ID: TodoId = 'NEW_TODO_ID';
 
 const developmentUrl = 'http://127.0.0.1:5500';
-// const deploymentUrl = 'https://burkhiev.github.io/';
+const deploymentUrl = 'https://burkhiev.github.io/';
 
 export const SITE_URL = developmentUrl;
 
