@@ -7,6 +7,8 @@ const localCssIdentName = process.env.NODE_ENV !== 'production'
 // const mustWatch = process.env.NODE_ENV !== 'production';
 const mustWatch = false;
 
+const publicPath = process.env.NODE_ENV !== 'production' ? '' : '../';
+
 module.exports = {
   mode: process.env.NODE_ENV,
 
@@ -35,7 +37,7 @@ module.exports = {
   
   output: {
     path: path.join(__dirname, 'build'),
-    publicPath: '/build/',
+    publicPath,
     filename: 'bundle.js',
     chunkFilename: '[name].js'
   },

@@ -13,18 +13,10 @@ export const INVALID_LIST_ID: TodoListId = 'INVALID_LIST_ID';
 
 export const NEW_TODO_ID: TodoId = 'NEW_TODO_ID';
 
-// console.log('document.defaultView?.location.origin', document.defaultView?.location.origin);
-// console.log('document.URL', document.URL);
-
 export const SITE_URL = document.defaultView?.location.origin ?? document.URL;
 
 const mainProductionPath = '/';
 const mainDevelopmentPath = '/build';
-
-let path = mainDevelopmentPath;
-
-if (process.env.NODE_ENV === 'production') {
-  path = mainProductionPath;
-}
+const path = process.env.NODE_ENV === 'production' ? mainProductionPath : mainDevelopmentPath;
 
 export const MAIN_PATH = path;
