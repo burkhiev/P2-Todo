@@ -1,33 +1,32 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import {
   BrowserRouter as Router,
+  Navigate,
   Route,
   Routes,
 } from 'react-router-dom';
 
 import PageHeader from './components/header/PageHeader';
-import PageBody from './components/body/PageBody';
+import Main from './components/main/Main';
 import ErrorBoundary from './service/ErrorBoundary';
-import store from './store/store';
-import Curtain from './components/serviceComponents/Curtain';
-import RoutePathes from './RoutePathes';
+import StyleController from './components/service-components/StyleController/StyleController';
+import AppProviders from './components/service-components/AppProviders/AppProviders';
 
 export default function App() {
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <Provider store={store}>
-          <Router>
-            <Curtain />
-            <PageHeader />
-            <main>
+        <Router>
+          <AppProviders>
+            <StyleController>
+              <PageHeader />
               <Routes>
-                <Route path={RoutePathes.home} element={<PageBody />} />
+                <Route path="/build/" element={<Main />} />
+                <Route path="/build/index.html" element={<Navigate to="/build/" />} />
               </Routes>
-            </main>
-          </Router>
-        </Provider>
+            </StyleController>
+          </AppProviders>
+        </Router>
       </ErrorBoundary>
     </React.StrictMode>
   );

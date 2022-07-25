@@ -1,25 +1,31 @@
 {
   "name": "p2-todo-client-browser",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "learning project",
   "main": "index.js",
   "scripts": {
     "build": "set NODE_ENV=production&& webpack --progress --color",
     "start": "set NODE_ENV=development&& webpack --progress --color",
-    "test": "jest",
+    "test": "jest ./src",
     "lint": "eslint ./src/**/*.* --color",
     "lint:fix": "eslint ./src/**/*.* --color --fix",
     "tcm": "tcm src"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.3.0",
     "@reduxjs/toolkit": "^1.8.2",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@types/react-beautiful-dnd": "^13.1.2",
+    "classnames": "^2.3.1",
     "lorem-ipsum": "^2.0.8",
+    "miragejs": "^0.1.45",
     "react": "^18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
+    "react-beautiful-dnd": "^13.1.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.2",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "ts-json-api": "^1.1.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.10",
@@ -27,12 +33,13 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
+    "@testing-library/user-event": "^14.2.1",
+    "@types/jest": "^28.1.4",
     "@types/react": "^18.0.14",
     "@types/react-dom": "^18.0.5",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "babel-loader": "^8.2.5",
-    "classnames": "^2.3.1",
     "css-loader": "^6.7.1",
     "css-modules-typescript-loader": "^4.0.1",
     "eslint": "^8.18.0",
@@ -42,13 +49,17 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.1",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
+    "jest-runner-tsc": "^1.6.0",
     "style-loader": "^3.3.1",
+    "ts-jest": "^28.0.5",
     "ts-loader": "^9.3.1",
+    "ts-node": "^10.8.2",
     "typed-css-modules": "^0.7.2",
     "typescript": "^4.7.4",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.10.0"
   },
-  "author": "Burkhiev Victor",
-  "license": "MIT"
+  "author": "Burkhiev Victor"
 }

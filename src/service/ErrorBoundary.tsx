@@ -23,8 +23,6 @@ export default class ErrorBoundary
     const { children } = this.props;
     const { hasError } = this.state;
 
-    return (
-      <div>{hasError ? 'Что-то пошло не так...' : children}</div>
-    );
+    return hasError ? 'Что-то пошло не так...' : children;
   }
 }
