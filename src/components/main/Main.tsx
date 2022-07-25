@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styles from './main1.css';
+import styles from './main.css';
 
 import Table from './table/Table';
 import Sidebar from '../sidebar/Sidebar/Sidebar';

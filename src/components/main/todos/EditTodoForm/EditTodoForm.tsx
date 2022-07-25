@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styles from './editTodoForm1.css';
+import styles from './editTodoForm.css';
 
 import { useAppSelector } from '../../../../hooks/reduxHooks';
 import { ITodo, TodoId } from '../../../../models/ITodo';

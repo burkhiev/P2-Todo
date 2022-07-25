@@ -1,7 +1,7 @@
 import React from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
-import styles from './list1.css';
+import styles from './list.css';
 
 import { TodoListId } from '../../../../models/ITodoList';
 import { useAppSelector } from '../../../../hooks/reduxHooks';

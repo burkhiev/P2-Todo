@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import styles from './sidebarTableItem1.css';
+import styles from './sidebarTableItem.css';
 
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { TodoTableId } from '../../../models/ITodoTable';

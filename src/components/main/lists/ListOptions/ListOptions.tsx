@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import styles from './listOptions1.css';
+import styles from './listOptions.css';
 
 import { TodoListId } from '../../../../models/ITodoList';
 import { useDeleteList } from '../../../../store/api/listSlice';
