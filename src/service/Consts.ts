@@ -13,13 +13,18 @@ export const INVALID_LIST_ID: TodoListId = 'INVALID_LIST_ID';
 
 export const NEW_TODO_ID: TodoId = 'NEW_TODO_ID';
 
-const developmentUrl = 'http://127.0.0.1:5500';
-const deploymentUrl = 'https://burkhiev.github.io/';
+// console.log('document.defaultView?.location.origin', document.defaultView?.location.origin);
+// console.log('document.URL', document.URL);
 
-export const SITE_URL = developmentUrl;
+export const SITE_URL = document.defaultView?.location.origin ?? document.URL;
 
 const mainProductionPath = '/';
 const mainDevelopmentPath = '/build';
-const mainDeploymentPath = '/P2-Todo-client-browser';
 
-export const MAIN_PATH = mainDevelopmentPath;
+let path = mainDevelopmentPath;
+
+if (process.env.NODE_ENV === 'production') {
+  path = mainProductionPath;
+}
+
+export const MAIN_PATH = path;
