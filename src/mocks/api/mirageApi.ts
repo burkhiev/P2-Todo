@@ -14,7 +14,7 @@ import InvalidDataError from '../../service/errors/InvalidDataError';
 import { ITodoList, TodoListId } from '../../models/ITodoList';
 import InvalidOperationError from '../../service/errors/InvalidOperationError';
 import ITodoListResource from '../../models/json-api-models/ITodoListResource';
-import { MAX_POSITION_FRACTION_DIGITS_NUMBER, POSITION_STEP } from '../../service/Consts';
+import { MAX_POSITION_FRACTION_DIGITS_NUMBER, POSITION_STEP, SITE_URL } from '../../service/Consts';
 import { ITodo } from '../../models/ITodo';
 import ITodoResource from '../../models/json-api-models/ITodoResource';
 import IMoveTodoResource from '../../models/json-api-models/IMoveTodoResource';
@@ -24,9 +24,9 @@ import IMoveTodoPayload from '../../models/IMoveTodoPayload';
 import IMoveListPayload from '../../models/IMoveListPayload';
 import OutOfRangeError from '../../service/errors/OutOfRangeError';
 
-export const MIRAGE_URL = 'http://127.0.0.1:5500';
+export const MIRAGE_URL = SITE_URL;
 export const MIRAGE_NAMESPACE = 'api';
-export const MIRAGE_DELAY = 200;
+export const MIRAGE_DELAY = 400;
 
 const MAX_TABLE_IDS_COUNT = 50;
 const MAX_LIST_IDS_COUNT = 100;
